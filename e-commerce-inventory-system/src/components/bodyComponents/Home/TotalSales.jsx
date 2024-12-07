@@ -5,7 +5,7 @@ import ApexCharts from "react-apexcharts";
 export default function TotalSales() {
   const options = {
     title: {
-      text: "Totale Sales",
+      text: "Total Sales",
       align: "left",
       style: {
         fontSize: "16px",

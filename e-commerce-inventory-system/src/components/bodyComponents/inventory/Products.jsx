@@ -7,13 +7,13 @@ export default function Products() {
   const columns = [
     {
       field: "id",
-      headerName: "ID",
+      headerName: "Product ID",
       width: 90,
       description: "id of the product",
     },
     {
       field: "product",
-      headerName: "Product",
+      headerName: "Product Name",
       width: 400,
       description: "",
       //same here we have the cell data which i will get the value of the cells in the tables cellData.row.fieldName
