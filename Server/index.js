@@ -1,11 +1,16 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors'; // Import CORS package
+import productRoutes from './routes/product.routes.js'; // Import product routes
 
 dotenv.config();
 
-const app = express();
+const app = express(); // Define app first
 const PORT = process.env.PORT || 5000;
+
+// Middleware to handle CORS
+app.use(cors()); // Apply CORS middleware here
 
 // Middleware to parse JSON
 app.use(express.json());
@@ -19,6 +24,9 @@ mongoose.connect(mongoURI, {
 })
   .then(() => console.log('MongoDB connected!'))
   .catch((error) => console.error('MongoDB connection error:', error));
+
+// Routes
+app.use('/api/products', productRoutes);
 
 // Sample Route
 app.get('/', (req, res) => {
