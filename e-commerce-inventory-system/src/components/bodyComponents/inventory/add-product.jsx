@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography, Grid, Container, FormHelperText } from "@mui/material";
+import axios from 'axios'
 
 export default function AddProduct() {
+    
   const [productId, setProductId] = useState("");
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
@@ -64,6 +66,7 @@ export default function AddProduct() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    axios.post('',{productId,productName,price,quantity})
     validateProductId();
     validateProductName();
     validatePrice();
@@ -112,7 +115,7 @@ export default function AddProduct() {
     >
       <Container maxWidth="sm">
         <Box sx={{ p: 4, bgcolor: "white", borderRadius: 2, boxShadow: 4 }}>
-          <Typography variant="h4" sx={{ mb: 3, textAlign: "center" }}>
+          <Typography variant="h4" sx={{ mb: 2, textAlign: "center" }}>
             Add New Product
           </Typography>
           <Grid container spacing={3}>
