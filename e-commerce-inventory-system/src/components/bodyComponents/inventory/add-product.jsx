@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography, Grid, Container, FormHelperText } from "@mui/material";
-import axios from 'axios'
+import { Box, TextField, Button, Typography, Grid, Container } from "@mui/material";
+import axios from "axios";
 
 export default function AddProduct() {
-    
   const [productId, setProductId] = useState("");
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-
+  
   const [errors, setErrors] = useState({
     productId: "",
     productName: "",
@@ -16,7 +15,10 @@ export default function AddProduct() {
     quantity: "",
   });
 
-  // Validate Product ID
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // Validation functions
   const validateProductId = () => {
     if (!productId.trim()) {
       setErrors((prevErrors) => ({ ...prevErrors, productId: "Product ID is required" }));
@@ -25,7 +27,6 @@ export default function AddProduct() {
     }
   };
 
-  // Validate Product Name
   const validateProductName = () => {
     if (!productName.trim()) {
       setErrors((prevErrors) => ({ ...prevErrors, productName: "Product Name is required" }));
@@ -34,39 +35,25 @@ export default function AddProduct() {
     }
   };
 
-  // Validate Price
   const validatePrice = () => {
-    if (!price || price <= -1) {
-      setErrors((prevErrors) => ({ ...prevErrors, price: "Price is required " }));
+    if (!price || price <= 0) {
+      setErrors((prevErrors) => ({ ...prevErrors, price: "Price is required and must be positive" }));
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, price: "" }));
     }
   };
 
-  // Validate Quantity
   const validateQuantity = () => {
     if (!quantity || quantity <= 0) {
-      setErrors((prevErrors) => ({ ...prevErrors, quantity: "Quantity must be more than 1" }));
+      setErrors((prevErrors) => ({ ...prevErrors, quantity: "Quantity must be greater than 0" }));
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, quantity: "" }));
     }
   };
 
-  const handlePriceChange = (e) => {
-    const value = e.target.value;
-    setPrice(value);
-    validatePrice();
-  };
-
-  const handleQuantityChange = (e) => {
-    const value = e.target.value;
-    setQuantity(value);
-    validateQuantity();
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('',{productId,productName,price,quantity})
+    // Validate all fields before making API request
     validateProductId();
     validateProductName();
     validatePrice();
@@ -75,22 +62,28 @@ export default function AddProduct() {
     // Check if there are any validation errors
     if (Object.values(errors).some((error) => error)) {
       console.log("Form has errors");
-      return;
+      return; // Don't proceed with the API call if there are errors
     }
 
-    // If no errors, submit the product details (can integrate with API or backend)
-    console.log({
-      productId,
-      productName,
-      price,
-      quantity,
-    });
+    // Send the POST request only if form is valid
+    axios
+      .post("http://localhost:5000/api/products", { productId, productName, price, quantity })
+      .then((response) => {
+        console.log("Product added:", response.data);
+        setSuccessMessage("Product successfully added!");
+        setErrorMessage(""); // Clear any previous error messages
 
-    // Clear the form after successful submission
-    setProductId("");
-    setProductName("");
-    setPrice("");
-    setQuantity("");
+        // Clear form after submission
+        setProductId("");
+        setProductName("");
+        setPrice("");
+        setQuantity("");
+      })
+      .catch((error) => {
+        console.error("Error adding product:", error);
+        setErrorMessage("Failed to add product. Please try again.");
+        setSuccessMessage(""); // Clear success message if error occurs
+      });
   };
 
   const isFormValid = () => {
@@ -118,6 +111,19 @@ export default function AddProduct() {
           <Typography variant="h4" sx={{ mb: 2, textAlign: "center" }}>
             Add New Product
           </Typography>
+
+          {/* Display success or error message */}
+          {successMessage && (
+            <Typography color="success.main" variant="body1" sx={{ textAlign: "center", mb: 2 }}>
+              {successMessage}
+            </Typography>
+          )}
+          {errorMessage && (
+            <Typography color="error.main" variant="body1" sx={{ textAlign: "center", mb: 2 }}>
+              {errorMessage}
+            </Typography>
+          )}
+
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -149,7 +155,7 @@ export default function AddProduct() {
                 type="number"
                 fullWidth
                 value={price}
-                onChange={handlePriceChange}
+                onChange={(e) => setPrice(e.target.value)}
                 onBlur={validatePrice}
                 required
                 error={!!errors.price}
@@ -163,7 +169,7 @@ export default function AddProduct() {
                 type="number"
                 fullWidth
                 value={quantity}
-                onChange={handleQuantityChange}
+                onChange={(e) => setQuantity(e.target.value)}
                 onBlur={validateQuantity}
                 required
                 error={!!errors.quantity}
@@ -172,6 +178,7 @@ export default function AddProduct() {
               />
             </Grid>
           </Grid>
+
           <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
             <Button
               variant="contained"
