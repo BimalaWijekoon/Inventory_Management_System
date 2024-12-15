@@ -1,47 +1,57 @@
 import { Typography } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Product from "./Product";
 import { DataGrid } from "@mui/x-data-grid";
-import productList from "./productList";
+import axios from "axios";
+
 export default function Products() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/products") // Replace with the correct API endpoint
+      .then((response) => {
+        // Map the fetched products and rename _id to id
+        const fetchedProducts = response.data.map((product) => ({
+          ...product, // Spread the rest of the product properties
+          id: product._id, // Rename _id to id
+        }));
+        setProducts(fetchedProducts); // Set the renamed products
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
+  }, []);
+
   const columns = [
     {
-      field: "id",
+      field: "productId",
       headerName: "Product ID",
       width: 90,
-      description: "id of the product",
+      description: "ID of the product",
     },
     {
-      field: "product",
+      field: "productName",
       headerName: "Product Name",
       width: 400,
       description: "",
-      //same here we have the cell data which i will get the value of the cells in the tables cellData.row.fieldName
-
       renderCell: (cellData) => {
-        console.log("the cell data is : ", cellData.row.name);
-        return <Product productName={cellData.row.name} />;
+        return <Product productName={cellData.row.productName} />;
       },
-    },
-    {
-      field: "category",
-      headerName: "Category",
-      width: 200,
-      description: "category of the product",
     },
     {
       field: "price",
       headerName: "Price",
       width: 150,
-      description: "price of the product",
-      valueGetter: (params) => "$" + params.row.stock,
+      description: "Price of the product",
+      valueGetter: (params) => "$" + params.row.price,
     },
     {
-      field: "stock",
+      field: "quantity",
       headerName: "Stock",
       width: 200,
-      description: "how many items in the stock",
-      valueGetter: (params) => params.row.stock + " pcs",
+      description: "How many items in stock",
+      valueGetter: (params) => params.row.quantity + " pcs",
     },
   ];
 
@@ -49,7 +59,7 @@ export default function Products() {
     <div>
       <DataGrid
         sx={{ borderLeft: 0, borderRight: 0, borderRadius: 0 }}
-        rows={productList}
+        rows={products} // Use the renamed product list
         columns={columns}
         initialState={{
           pagination: {
