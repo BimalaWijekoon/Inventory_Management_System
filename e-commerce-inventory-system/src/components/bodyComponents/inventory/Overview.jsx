@@ -1,16 +1,31 @@
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
-import React from "react";
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material"; 
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Overview() {
+  const [totalProductValue, setTotalProductValue] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTotalProductValue = async () => {
+      try {
+        const response = await axios.get("/api/products/total-value");
+        // Ensure the value is a valid number
+        setTotalProductValue(response.data.totalProductValue || 0);
+      } catch (error) {
+        console.error("Error fetching total product value:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTotalProductValue();
+  }, []);
+
+  if (loading) {
+    return <Typography variant="h6">Loading...</Typography>;
+  }
+
   return (
     <Box>
       <TableContainer>
@@ -35,10 +50,10 @@ export default function Overview() {
             </TableRow>
 
             <TableRow>
-              <TableCell>Yesterday sell</TableCell>
+              <TableCell>Total product value</TableCell>
               <TableCell align="right">
                 <Typography variant="subtitle1" fontWeight="bold">
-                  3652
+                  {totalProductValue.toLocaleString()} {/* Format as number */}
                 </Typography>
               </TableCell>
             </TableRow>
