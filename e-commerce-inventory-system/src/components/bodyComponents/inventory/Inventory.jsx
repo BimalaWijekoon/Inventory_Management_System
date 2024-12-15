@@ -35,6 +35,7 @@ export default class Inventory extends Component {
                   </Button>
                 </Link>
               </Box>
+              {/* Here we can pass the category data to the Products component */}
               <Products />
             </Box>
           </Grid>

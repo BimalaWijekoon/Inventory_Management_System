@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography, Grid, Container } from "@mui/material";
+import { Box, TextField, Button, Typography, Grid, Container, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import axios from "axios";
 
 export default function AddProduct() {
@@ -7,12 +7,14 @@ export default function AddProduct() {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-  
+  const [category, setCategory] = useState("");
+
   const [errors, setErrors] = useState({
     productId: "",
     productName: "",
     price: "",
     quantity: "",
+    category: "",
   });
 
   const [successMessage, setSuccessMessage] = useState("");
@@ -51,6 +53,14 @@ export default function AddProduct() {
     }
   };
 
+  const validateCategory = () => {
+    if (!category) {
+      setErrors((prevErrors) => ({ ...prevErrors, category: "Category is required" }));
+    } else {
+      setErrors((prevErrors) => ({ ...prevErrors, category: "" }));
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Validate all fields before making API request
@@ -58,6 +68,7 @@ export default function AddProduct() {
     validateProductName();
     validatePrice();
     validateQuantity();
+    validateCategory();
 
     // Check if there are any validation errors
     if (Object.values(errors).some((error) => error)) {
@@ -67,7 +78,7 @@ export default function AddProduct() {
 
     // Send the POST request only if form is valid
     axios
-      .post("http://localhost:5000/api/products", { productId, productName, price, quantity })
+      .post("http://localhost:5000/api/products", { productId, productName, price, quantity, category })
       .then((response) => {
         console.log("Product added:", response.data);
         setSuccessMessage("Product successfully added!");
@@ -78,6 +89,7 @@ export default function AddProduct() {
         setProductName("");
         setPrice("");
         setQuantity("");
+        setCategory("");
       })
       .catch((error) => {
         console.error("Error adding product:", error);
@@ -92,6 +104,7 @@ export default function AddProduct() {
       productName.trim() &&
       price > 0 &&
       quantity > 0 &&
+      category &&
       !Object.values(errors).some((error) => error)
     );
   };
@@ -176,6 +189,27 @@ export default function AddProduct() {
                 helperText={errors.quantity}
                 inputProps={{ min: 1 }}
               />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth required>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  onBlur={validateCategory}
+                  error={!!errors.category}
+                >
+                  <MenuItem value="Tshirt">Tshirt</MenuItem>
+                  <MenuItem value="Shirt">Shirt</MenuItem>
+                  <MenuItem value="Shoes">Shoes</MenuItem>
+                  <MenuItem value="Trousers">Trousers</MenuItem>
+                  <MenuItem value="Socks">Socks</MenuItem>
+                  <MenuItem value="Shorts">Shorts</MenuItem>
+                </Select>
+                <Typography variant="caption" color="error">
+                  {errors.category}
+                </Typography>
+              </FormControl>
             </Grid>
           </Grid>
 
