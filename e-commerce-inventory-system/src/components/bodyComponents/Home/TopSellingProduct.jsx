@@ -9,19 +9,36 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+
 export default function TopSellingProduct() {
   const products = [
-    { name: "ASOS Ridey", price: 25.05, quantity: 73, amount: 1.828 },
-    {
-      name: "Philip Morris International",
-      price: 85.05,
-      quantity: 84,
-      amount: 7.144,
-    },
-    { name: "Donna Karan", price: 96.05, quantity: 94, amount: 9.028 },
-    { name: "Marco Pollo", price: 31.09, quantity: 51, amount: 1.585 },
-    { name: "Dolce Gabbana", price: 27.09, quantity: 78, amount: 2.113 },
+    { name: "Addidas White Pair", price: 25.0, quantity: 30 },
+    { name: "Nike Black Pair", price: 45.0, quantity: 28 },
+    { name: "Black Linen Shirt", price: 15.0, quantity: 27 },
+    { name: "Beige Pants", price: 20.0, quantity: 25 },
+    { name: "Black Shorts", price: 18.0, quantity: 20 },
   ];
+
+  // Recursive function to calculate amounts
+  const calculateAmounts = (products, index = 0) => {
+    // Base case: If index is out of bounds, return an empty array
+    if (index >= products.length) {
+      return [];
+    }
+
+    // Calculate amount for the current product
+    const currentAmount = {
+      ...products[index],
+      amount: products[index].price * products[index].quantity,
+    };
+
+    // Recursive call for the remaining products
+    return [currentAmount, ...calculateAmounts(products, index + 1)];
+  };
+
+  // Get updated products with amounts
+  const updatedProducts = calculateAmounts(products);
+
   return (
     <Box
       sx={{
@@ -33,7 +50,7 @@ export default function TopSellingProduct() {
       }}
     >
       <Typography variant="h6" fontWeight={"bold"} sx={{ mx: 3 }}>
-        Top selling products
+        Top Selling Products
       </Typography>
       <TableContainer>
         <Table>
@@ -46,16 +63,14 @@ export default function TopSellingProduct() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product, id) => {
-              return (
-                <TableRow key={id}>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.price}</TableCell>
-                  <TableCell>{product.quantity}</TableCell>
-                  <TableCell>{product.amount}</TableCell>
-                </TableRow>
-              );
-            })}
+            {updatedProducts.map((product, id) => (
+              <TableRow key={id}>
+                <TableCell>{product.name}</TableCell>
+                <TableCell>${product.price.toFixed(2)}</TableCell>
+                <TableCell>{product.quantity}</TableCell>
+                <TableCell>${product.amount.toFixed(2)}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

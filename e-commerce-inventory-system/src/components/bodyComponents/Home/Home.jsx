@@ -7,7 +7,7 @@ import UilTruck from "@iconscout/react-unicons/icons/uil-truck";
 import UilCheckCircle from "@iconscout/react-unicons/icons/uil-check-circle";
 import InfoCard from "../../subComponents/InfoCard";
 import TotalSales from "./TotalSales";
-import SalesByCity from "./SalesByCity";
+import SalesByCategoty from "./SalesByCategory";
 import Channels from "./Channels";
 import TopSellingProduct from "./TopSellingProduct";
 export default class Home extends Component {
@@ -80,7 +80,7 @@ export default class Home extends Component {
             <TotalSales data={data} />
           </Grid>
           <Grid item md={4}>
-            <SalesByCity data={data} />
+            <SalesByCategoty data={data} />
           </Grid>
         </Grid>
 
