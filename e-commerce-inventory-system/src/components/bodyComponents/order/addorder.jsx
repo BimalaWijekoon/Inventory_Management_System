@@ -15,36 +15,27 @@ const AddOrder = () => {
 
   const categoryDetails = {
     Tshirt: {
-      colors: ["Red", "Blue", "Green", "Black"],
-      brands: ["Nike", "Adidas", "Puma"]
+      options: ["Red", "Blue", "Green", "Black", "Nike", "Adidas", "Puma"]
     },
     Shirt: {
-      colors: ["White", "Blue", "Grey", "Black"],
-      brands: ["Linen", "Cotton"]
+      options: ["White", "Blue", "Grey", "Black", "Linen", "Cotton"]
     },
     Shoes: {
-      colors: ["Black", "White", "Grey", "Brown"],
-      brands: ["Nike", "Adidas", "Boots", "Leather"]
+      options: ["Black", "White", "Grey", "Brown", "Nike", "Adidas", "Boots", "Leather"]
     },
     Trousers: {
-      colors: ["Beige", "Black", "Blue", "Grey"],
-      brands: []
+      options: ["Beige", "Black", "Blue", "Grey"]
     },
     Socks: {
-      colors: ["White", "Black", "Grey", "Blue"],
-      types: ["Low Cut", "Anklets", "Mid Calf"]
+      options: ["White", "Black", "Grey", "Blue", "Low Cut", "Anklets", "Mid Calf"]
     },
     Shorts: {
-      colors: ["Blue", "Grey", "Black", "Green"],
-      brands: []
+      options: ["Blue", "Grey", "Black", "Green"]
     }
   };
 
   const handleAddItem = () => {
-    setItems([
-      ...items,
-      { category: "", color: "", brand: "", type: "", quantity: 1 }
-    ]);
+    setItems([...items, { category: "", colorOrBrand: "", quantity: 1 }]);
   };
 
   const handleItemChange = (index, field, value) => {
@@ -60,11 +51,8 @@ const AddOrder = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Clear previous errors
     setError("");
 
-    
     try {
       const response = await axios.post("http://localhost:5000/api/orders", {
         customerName,
@@ -73,11 +61,10 @@ const AddOrder = () => {
       });
       console.log("Order Submitted: ", response.data);
       alert("Order submitted successfully!");
-      // Reset form after successful submission
       setCustomerName("");
       setMobileNumber("");
       setItems([]);
-      navigate("/orders"); // Navigate to the orders page on successful submission
+      navigate("/orders");
     } catch (error) {
       console.error("Error submitting order: ", error);
       setError("There was an error submitting the order. Please try again.");
@@ -85,18 +72,7 @@ const AddOrder = () => {
   };
 
   return (
-    <Box
-      sx={{
-        margin: 3,
-        padding: 3,
-        bgcolor: "white",
-        borderRadius: 2,
-        maxWidth: 900,
-        maxHeight: 1100,
-        marginLeft: "auto",
-        marginRight: "auto",
-      }}
-    >
+    <Box sx={{ margin: 3, padding: 3, bgcolor: "white", borderRadius: 2, maxWidth: 900, marginLeft: "auto", marginRight: "auto" }}>
       <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 2 }}>
         Add New Order
       </Typography>
@@ -157,54 +133,20 @@ const AddOrder = () => {
               {item.category && (
                 <>
                   <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                    <InputLabel>Color</InputLabel>
+                    <InputLabel>Color or Brand</InputLabel>
                     <Select
-                      value={item.color}
-                      onChange={(e) => handleItemChange(index, "color", e.target.value)}
-                      label="Color"
+                      value={item.colorOrBrand}
+                      onChange={(e) => handleItemChange(index, "colorOrBrand", e.target.value)}
+                      label="Color or Brand"
                       required
                     >
-                      {categoryDetails[item.category]?.colors?.map((col) => (
-                        <MenuItem key={col} value={col}>
-                          {col}
+                      {categoryDetails[item.category]?.options?.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
                         </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
-
-                  {categoryDetails[item.category]?.brands?.length > 0 && (
-                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                      <InputLabel>Brand</InputLabel>
-                      <Select
-                        value={item.brand}
-                        onChange={(e) => handleItemChange(index, "brand", e.target.value)}
-                        label="Brand"
-                      >
-                        {categoryDetails[item.category]?.brands.map((br) => (
-                          <MenuItem key={br} value={br}>
-                            {br}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
-
-                  {item.category === "Socks" && (
-                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                      <InputLabel>Type</InputLabel>
-                      <Select
-                        value={item.type}
-                        onChange={(e) => handleItemChange(index, "type", e.target.value)}
-                        label="Type"
-                      >
-                        {categoryDetails.Socks.types.map((ty) => (
-                          <MenuItem key={ty} value={ty}>
-                            {ty}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
 
                   <TextField
                     label="Quantity"
@@ -221,11 +163,7 @@ const AddOrder = () => {
               )}
 
               <Box sx={{ display: "flex", alignItems: "center", marginTop: 1 }}>
-                <IconButton
-                  onClick={() => handleRemoveItem(index)}
-                  color="error"
-                  sx={{ marginRight: 1 }}
-                >
+                <IconButton onClick={() => handleRemoveItem(index)} color="error" sx={{ marginRight: 1 }}>
                   <DeleteIcon />
                   <Typography variant="body2">Delete</Typography>
                 </IconButton>
@@ -234,12 +172,7 @@ const AddOrder = () => {
           ))}
 
           <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleAddItem}
-              disabled={!customerName || !mobileNumber}
-            >
+            <Button variant="contained" color="secondary" onClick={handleAddItem} disabled={!customerName || !mobileNumber}>
               Add Item
             </Button>
           </Box>
