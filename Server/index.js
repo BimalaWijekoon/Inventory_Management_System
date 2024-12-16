@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors'; // Import CORS package
 import productRoutes from './routes/product.routes.js'; // Import product routes
+import orderRoutes from './routes/order.routes.js'; // Import order routes
+
 
 dotenv.config();
 
@@ -27,6 +29,8 @@ mongoose.connect(mongoURI, {
 
 // Routes
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes); // Add this line for order routes
+
 
 // Sample Route
 app.get('/', (req, res) => {
