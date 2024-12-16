@@ -1,25 +1,49 @@
-import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material"; 
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Overview() {
-  const [totalProductValue, setTotalProductValue] = useState(0);
+  const [totalProductValue, setTotalProductValue] = useState(0); // Total value of all products
+  const [totalProducts, setTotalProducts] = useState(0); // Total quantity of all products
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTotalProductValue = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await axios.get("/api/products/total-value");
-        // Ensure the value is a valid number
-        setTotalProductValue(response.data.totalProductValue || 0);
+        // Fetch all products
+        const response = await axios.get("http://localhost:5000/api/products");
+        const products = response.data;
+
+        // Extract price and quantity into separate arrays
+        const prices = products.map((product) => product.price);
+        const quantities = products.map((product) => product.quantity);
+
+        // Recursive function to calculate total product value
+        const calculateTotalValue = (priceArray, quantityArray, index = 0) => {
+          if (index === priceArray.length) return 0; // Base case: no more products
+          return priceArray[index] * quantityArray[index] + calculateTotalValue(priceArray, quantityArray, index + 1);
+        };
+
+        // Recursive function to calculate total quantity
+        const calculateTotalQuantity = (quantityArray, index = 0) => {
+          if (index === quantityArray.length) return 0; // Base case: no more products
+          return quantityArray[index] + calculateTotalQuantity(quantityArray, index + 1);
+        };
+
+        // Calculate total value and quantity
+        const totalValue = calculateTotalValue(prices, quantities);
+        const totalQuantity = calculateTotalQuantity(quantities);
+
+        setTotalProductValue(totalValue);
+        setTotalProducts(totalQuantity);
       } catch (error) {
-        console.error("Error fetching total product value:", error);
+        console.error("Error fetching products:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTotalProductValue();
+    fetchProductData();
   }, []);
 
   if (loading) {
@@ -32,16 +56,16 @@ export default function Overview() {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell>Total Product</TableCell>
+              <TableCell>Total Products</TableCell>
               <TableCell align="right">
                 <Typography variant="subtitle1" fontWeight="bold">
-                  15226
+                  {totalProducts.toLocaleString()} {/* Format as number */}
                 </Typography>
               </TableCell>
             </TableRow>
 
             <TableRow>
-              <TableCell>Today sell</TableCell>
+              <TableCell>Today Sell</TableCell>
               <TableCell align="right">
                 <Typography variant="subtitle1" fontWeight="bold">
                   5241
@@ -50,16 +74,16 @@ export default function Overview() {
             </TableRow>
 
             <TableRow>
-              <TableCell>Total product value</TableCell>
+              <TableCell>Total Product Value</TableCell>
               <TableCell align="right">
                 <Typography variant="subtitle1" fontWeight="bold">
-                  {totalProductValue.toLocaleString()} {/* Format as number */}
+                  {"$" + totalProductValue.toLocaleString()} {/* Format as number */}
                 </Typography>
               </TableCell>
             </TableRow>
 
             <TableRow>
-              <TableCell>Total sell</TableCell>
+              <TableCell>Total Sell</TableCell>
               <TableCell align="right">
                 <Typography variant="subtitle1" fontWeight="bold">
                   11425
