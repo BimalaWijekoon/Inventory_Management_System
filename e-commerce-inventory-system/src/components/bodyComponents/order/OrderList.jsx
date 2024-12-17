@@ -12,6 +12,31 @@ export default class OrderList extends Component {
       orders: [], // State to hold fetched orders
       open: false,
       selectedOrder: null, // Selected order for the modal
+      prices: {
+        "Blue Shirt": 10,
+        "Green Shirt": 10,
+        "Black Shirt": 90,
+        "Grey T-shirt": 8,
+        "Yellow T-shirt": 8,
+        "White T-shirt": 8,
+        "Blue Shorts": 5,
+        "Black Shorts": 5,
+        "Red Shorts": 5,
+        "Low Cut Socks": 4,
+        "Grey Trousers": 5,
+        "Leather Shoes": 20,
+        "Anklets Socks": 5,
+        "Mid-Calf Socks": 8,
+        "Canvas Shoes": 30,
+        "Cleats": 50,
+        "Boots": 40,
+        "Nike Shoes": 180,
+        "Linen Shirt": 20, // Newly added
+        "Black Shoes": 50, // Newly added
+        "Beige Trousers": 18, // Newly added
+        "Black Tshirt": 8, // Newly added
+        "Adidas Shoes": 120, // Newly added
+      },
     };
   }
 
@@ -33,15 +58,31 @@ export default class OrderList extends Component {
 
   // Process orders into DataGrid row format
   processOrders = (orders) => {
-    return orders.flatMap((order) =>
-      order.items.map((item, index) => ({
-        id: `${order._id}-${index}`, // Unique ID for each row
+    return orders.map((order) => {
+      // Prepare items as a string (e.g., "2 x Blue Shirt, 1 x Nike Shoes")
+      const items = order.items
+        .map(
+          (item) =>
+            `${item.quantity} x ${item.colorOrBrand} ${item.category}` // Format each item
+        )
+        .join(", ");
+
+      // Calculate the total price for this order
+      const totalPrice = order.items.reduce((sum, item) => {
+        const key = `${item.colorOrBrand} ${item.category}`; // Construct key like "Blue Shirt"
+        const price = this.state.prices[key] || 0; // Match product name with price
+        return sum + price * item.quantity; // Add (price * quantity) to the total
+      }, 0);
+
+      return {
+        id: order._id, // Unique ID for each order
+        orderId: order._id,
         customerName: order.customerName,
-        item: `${item.colorOrBrand} ${item.category}`,
-        quantity: item.quantity,
+        items, // All items as a single string
+        totalPrice: totalPrice.toFixed(2), // Total price for the order
         fullOrder: order, // Include the full order for "View Details"
-      }))
-    );
+      };
+    });
   };
 
   handleOrderDetail = (order) => {
@@ -55,22 +96,26 @@ export default class OrderList extends Component {
   render() {
     const columns = [
       {
-        field: "customerName",
-        headerName: "Customer Name",
-        flex: 1,
-      },
-      {
-        field: "item",
-        headerName: "Item",
+        field: "orderId",
+        headerName: "Order ID",
         flex: 2,
       },
       {
-        field: "quantity",
-        headerName: "Quantity",
+        field: "customerName",
+        headerName: "Customer Name",
+        flex: 2,
+      },
+      {
+        field: "items", // New column for Items
+        headerName: "Items",
+        flex: 4,
+      },
+      {
+        field: "totalPrice",
+        headerName: "Total Price ($)",
         flex: 1,
         type: "number",
       },
-      
     ];
 
     return (
