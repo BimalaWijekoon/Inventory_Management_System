@@ -1,44 +1,38 @@
 import mongoose from 'mongoose';
 
-// Define OrderItem schema first
+// Define OrderItem schema
 const OrderItemSchema = new mongoose.Schema({
-  category: { 
-    type: String, 
-    required: true, 
-    enum: ['Tshirt', 'Shirt', 'Shoes', 'Trousers', 'Socks', 'Shorts'] 
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product', // Reference to the Product model
+    required: true,
   },
-  colorOrBrand: { 
-    type: String, 
-    required: true // Combines both color and brand into a single field
+  productName: {
+    type: String,
+    required: true,
   },
-  type: { 
-    type: String, 
-    required: false // Optional field for socks
-  },
-  quantity: { 
-    type: Number, 
-    required: true, 
-    min: 1 
+  quantity: {
+    type: Number,
+    required: true,
+    min: 1,
   },
 });
 
-// Define Order schema with timestamps
+// Define Order schema with customer details and items array
 const OrderSchema = new mongoose.Schema(
   {
-    customerName: { 
-      type: String, 
-      required: true 
+    customerName: {
+      type: String,
+      required: true,
     },
-    mobileNumber: { 
-      type: String, 
-      required: true, 
-      match: /^[0-9]{10}$/ // Ensures a 10-digit number
+    mobileNumber: {
+      type: String,
+      required: true,
+      match: /^[0-9]{10}$/, // Ensures a 10-digit number
     },
     items: [OrderItemSchema], // Array of items in the order
   },
-  { 
-    timestamps: true // Automatically adds `createdAt` and `updatedAt`
-  }
+  { timestamps: true } // Automatically adds `createdAt` and `updatedAt`
 );
 
 export default mongoose.model('Order', OrderSchema);
