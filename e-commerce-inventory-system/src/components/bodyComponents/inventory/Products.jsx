@@ -4,97 +4,88 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 
 export default function Products() {
-  const [allProducts, setAllProducts] = useState([]); // Store all products in an array
+  const [allProducts, setAllProducts] = useState([]); // All products state
   const [filteredProducts, setFilteredProducts] = useState([]); // Filtered products for display
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoryQuery, setCategoryQuery] = useState(""); // Store category query
+  const [categoryQuery, setCategoryQuery] = useState("");
 
-  // Fetch data from the API and store in the array
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/products")
-      .then((response) => {
-        const fetchedProducts = response.data.map((product) => ({
-          ...product,
-          id: product._id, // Rename _id to id
-        }));
-        const sortedProducts = mergeSort(fetchedProducts, "productId"); // Sort by productId
-        setAllProducts(sortedProducts); // Store sorted data in allProducts
-        setFilteredProducts(sortedProducts); // Display initially sorted data
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-      });
+    fetchProducts();
   }, []);
 
-  // Merge Sort Implementation
-  const mergeSort = (arr, key) => {
-    if (arr.length <= 1) return arr;
+  // Fetch products and orders
+  const fetchProducts = async () => {
+    try {
+      const productResponse = await axios.get("http://localhost:5000/api/products");
+      const orderResponse = await axios.get("http://localhost:5000/api/orders");
 
-    const mid = Math.floor(arr.length / 2);
-    const left = mergeSort(arr.slice(0, mid), key);
-    const right = mergeSort(arr.slice(mid), key);
+      const products = productResponse.data.map((product) => ({
+        ...product,
+        id: product._id,
+      }));
+      const updatedProducts = adjustProductQuantities(products, orderResponse.data.orders);
 
-    return merge(left, right, key);
-  };
-
-  const merge = (left, right, key) => {
-    const sorted = [];
-    while (left.length && right.length) {
-      if (left[0][key] <= right[0][key]) {
-        sorted.push(left.shift());
-      } else {
-        sorted.push(right.shift());
-      }
-    }
-    return [...sorted, ...left, ...right];
-  };
-
-  // Recursive Binary Search for Product ID
-  const binarySearch = (arr, key, value, low = 0, high = arr.length - 1) => {
-    if (low > high) return null;
-
-    const mid = Math.floor((low + high) / 2);
-    if (arr[mid][key].toString() === value.toString()) {
-      return arr[mid];
-    } else if (arr[mid][key] > value) {
-      return binarySearch(arr, key, value, low, mid - 1);
-    } else {
-      return binarySearch(arr, key, value, mid + 1, high);
+      setAllProducts(updatedProducts);
+      setFilteredProducts(updatedProducts);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
-  // Handle search by Product ID or Category
+  // Adjust product stock based on orders
+  const adjustProductQuantities = (products, orders) => {
+    const updatedProducts = [...products];
+
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        const product = updatedProducts.find((p) => p.productName === item.productName);
+        if (product) {
+          product.quantity -= item.quantity;
+          if (product.quantity < 0) product.quantity = 0; // Prevent negative stock
+        }
+      });
+    });
+
+    return updatedProducts;
+  };
+
+  // Search and filter functionality
   const handleSearch = (e) => {
-    const query = e.target.value;
+    const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-
-    if (query === "" && categoryQuery === "") {
-      setFilteredProducts(allProducts); // Reset to all products
-    } else {
-      // Filter by Product ID and Category
-      const filtered = allProducts.filter(
-        (product) =>
-          (product.productId.toLowerCase().includes(query.toLowerCase()) ||
-            product.productName.toLowerCase().includes(query.toLowerCase())) &&
-          (categoryQuery === "" || product.category.toLowerCase().includes(categoryQuery.toLowerCase()))
-      );
-      setFilteredProducts(filtered);
-    }
+    filterProducts(query, categoryQuery);
   };
 
   const handleCategoryChange = (e) => {
-    const category = e.target.value;
+    const category = e.target.value.toLowerCase();
     setCategoryQuery(category);
+    filterProducts(searchQuery, category);
+  };
 
-    // Filter by Product ID and Category
+  const filterProducts = (search, category) => {
     const filtered = allProducts.filter(
       (product) =>
-        (searchQuery === "" || product.productId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.productName.toLowerCase().includes(searchQuery.toLowerCase())) &&
-        (category === "" || product.category.toLowerCase().includes(category.toLowerCase()))
+        (product.productId.toLowerCase().includes(search) ||
+          product.productName.toLowerCase().includes(search)) &&
+        (category === "" || product.category.toLowerCase().includes(category))
     );
     setFilteredProducts(filtered);
+  };
+
+  // Simulate order placement and update state
+  const handleOrderPlaced = (newOrder) => {
+    const updatedProducts = [...allProducts];
+
+    newOrder.items.forEach((item) => {
+      const product = updatedProducts.find((p) => p.productName === item.productName);
+      if (product) {
+        product.quantity -= item.quantity;
+        if (product.quantity < 0) product.quantity = 0; // Prevent negative stock
+      }
+    });
+
+    setAllProducts(updatedProducts);
+    setFilteredProducts(updatedProducts);
   };
 
   const columns = [
@@ -102,17 +93,17 @@ export default function Products() {
     {
       field: "productName",
       headerName: "Product Name",
-      width: 400,
+      width: 300,
       renderCell: (cellData) => <Product productName={cellData.row.productName} />,
     },
     { field: "price", headerName: "Price", width: 150, valueGetter: (params) => "$" + params.row.price },
-    { field: "quantity", headerName: "Stock", width: 200, valueGetter: (params) => params.row.quantity + " pcs" },
-    { field: "category", headerName: "Category", width: 200 }, // Added Category column
+    { field: "quantity", headerName: "Stock", width: 150, valueGetter: (params) => params.row.quantity + " pcs" },
+    { field: "category", headerName: "Category", width: 150 },
   ];
 
   return (
     <div>
-      {/* Search Box for Product ID */}
+      {/* Search Input */}
       <input
         type="text"
         placeholder="Search by Product ID or Name"
@@ -127,7 +118,7 @@ export default function Products() {
         }}
       />
 
-      {/* Category Dropdown */}
+      {/* Category Filter */}
       <select
         value={categoryQuery}
         onChange={handleCategoryChange}
@@ -150,17 +141,30 @@ export default function Products() {
 
       {/* Data Grid */}
       <DataGrid
-        sx={{ borderLeft: 0, borderRight: 0, borderRadius: 0 }}
-        rows={filteredProducts} // Use filtered products
+        rows={filteredProducts}
         columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
-        }}
         pageSizeOptions={[5, 10, 20]}
-        checkboxSelection
       />
+
+      {/* Simulate Order Placement */}
+      <button
+        onClick={() =>
+          handleOrderPlaced({
+            items: [{ productName: "T-shirt", quantity: 2 }],
+          })
+        }
+        style={{
+          padding: "10px 20px",
+          marginTop: "20px",
+          backgroundColor: "#007BFF",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Simulate Order Placement
+      </button>
     </div>
   );
 }

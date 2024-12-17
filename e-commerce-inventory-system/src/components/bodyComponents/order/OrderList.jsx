@@ -10,38 +10,15 @@ export default class OrderList extends Component {
     super(props);
     this.state = {
       orders: [], // State to hold fetched orders
+      products: [], // State to hold fetched product prices
       open: false,
       selectedOrder: null, // Selected order for the modal
-      prices: {
-        "Blue Shirt": 10,
-        "Green Shirt": 10,
-        "Black Shirt": 90,
-        "Grey T-shirt": 8,
-        "Yellow T-shirt": 8,
-        "White T-shirt": 8,
-        "Blue Shorts": 5,
-        "Black Shorts": 5,
-        "Red Shorts": 5,
-        "Low Cut Socks": 4,
-        "Grey Trousers": 5,
-        "Leather Shoes": 20,
-        "Anklets Socks": 5,
-        "Mid-Calf Socks": 8,
-        "Canvas Shoes": 30,
-        "Cleats": 50,
-        "Boots": 40,
-        "Nike Shoes": 180,
-        "Linen Shirt": 20, // Newly added
-        "Black Shoes": 50, // Newly added
-        "Beige Trousers": 18, // Newly added
-        "Black Tshirt": 8, // Newly added
-        "Adidas Shoes": 120, // Newly added
-      },
     };
   }
 
   componentDidMount() {
     this.fetchOrders(); // Fetch orders when the component mounts
+    this.fetchProducts(); // Fetch product prices
   }
 
   // Fetch orders from the backend
@@ -56,6 +33,17 @@ export default class OrderList extends Component {
     }
   };
 
+  // Fetch product prices from the backend
+  fetchProducts = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/products"); // Call the backend API for products
+      const products = response.data.products; // Extract the product prices from the response
+      this.setState({ products }); // Update state with product prices
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
   // Process orders into DataGrid row format
   processOrders = (orders) => {
     return orders.map((order) => {
@@ -63,14 +51,16 @@ export default class OrderList extends Component {
       const items = order.items
         .map(
           (item) =>
-            `${item.quantity} x ${item.colorOrBrand} ${item.category}` // Format each item
+            `${item.quantity} x ${item.productName}` // Format each item
         )
         .join(", ");
 
-      // Calculate the total price for this order
+      // Calculate the total price for this order using the fetched product prices
       const totalPrice = order.items.reduce((sum, item) => {
-        const key = `${item.colorOrBrand} ${item.category}`; // Construct key like "Blue Shirt"
-        const price = this.state.prices[key] || 0; // Match product name with price
+        const product = this.state.products.find(
+          (product) => product.name === item.productName
+        ); // Find the product price by name
+        const price = product ? product.price : 0; // Use the price from the product table, default to 0 if not found
         return sum + price * item.quantity; // Add (price * quantity) to the total
       }, 0);
 
