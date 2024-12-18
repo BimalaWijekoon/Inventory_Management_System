@@ -6,10 +6,19 @@ export const createOrder = async (req, res) => {
   try {
     const { customerName, mobileNumber, items } = req.body;
 
+    // Validate input
     if (!customerName || !mobileNumber || !items || items.length === 0) {
       return res.status(400).json({ message: "Customer name, mobile number, and order items are required." });
     }
 
+    // Check if each item in the order is valid
+    for (const item of items) {
+      if (!item.productId || !item.quantity || item.quantity <= 0) {
+        return res.status(400).json({ message: "Each item must have a valid product ID and quantity." });
+      }
+    }
+
+    // Create the new order
     const newOrder = new Order({
       customerName,
       mobileNumber,
@@ -44,7 +53,7 @@ export const getOrderById = async (req, res) => {
       return res.status(400).json({ message: "Invalid order ID" });
     }
 
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId).populate('items.productId'); // Populate product details in the order items
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
@@ -64,6 +73,13 @@ export const updateOrder = async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
       return res.status(400).json({ message: "Invalid order ID" });
+    }
+
+    // Validate items
+    for (const item of items) {
+      if (!item.productId || !item.quantity || item.quantity <= 0) {
+        return res.status(400).json({ message: "Each item must have a valid product ID and quantity." });
+      }
     }
 
     const updatedOrder = await Order.findByIdAndUpdate(
