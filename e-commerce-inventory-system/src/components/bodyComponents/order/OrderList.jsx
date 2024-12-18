@@ -17,15 +17,25 @@ export default class OrderList extends Component {
   }
 
   componentDidMount() {
-    this.fetchOrders(); // Fetch orders when the component mounts
-    this.fetchProducts(); // Fetch product prices
+    this.loadData(); // Combined method to fetch products and orders
   }
+
+  // Combined fetch method to ensure products are loaded before orders
+  loadData = async () => {
+    try {
+      await this.fetchProducts(); // Fetch products first
+      await this.fetchOrders(); // Fetch orders after products
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
 
   // Fetch orders from the backend
   fetchOrders = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/orders"); // Call the backend API
-      const orders = response.data.orders; // Extract the orders from the response
+      const orders = response.data.orders || []; // Extract orders from the response
+      console.log("Fetched Orders: ", orders); // Debug fetched orders
       const rows = this.processOrders(orders); // Transform orders for DataGrid
       this.setState({ orders: rows }); // Update state with processed orders
     } catch (error) {
@@ -37,7 +47,8 @@ export default class OrderList extends Component {
   fetchProducts = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/products"); // Call the backend API for products
-      const products = response.data.products; // Extract the product prices from the response
+      const products = response.data.products || []; // Extract the product prices from the response
+      console.log("Fetched Products: ", products); // Debug fetched products
       this.setState({ products }); // Update state with product prices
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -58,11 +69,35 @@ export default class OrderList extends Component {
       // Calculate the total price for this order using the fetched product prices
       const totalPrice = order.items.reduce((sum, item) => {
         const product = this.state.products.find(
-          (product) => product.name === item.productName
-        ); // Find the product price by name
+          (product) =>
+            product.name.trim().toLowerCase() ===
+            item.productName.trim().toLowerCase() // Match case-insensitively
+        );
+        if (!product) {
+          console.warn(`Product not found: ${item.productName}`); // Log missing products
+        }
         const price = product ? product.price : 0; // Use the price from the product table, default to 0 if not found
         return sum + price * item.quantity; // Add (price * quantity) to the total
       }, 0);
+
+      // Additional quantity-based calculation for each item
+      const quantityCalculations = order.items.map((item) => {
+        const product = this.state.products.find(
+          (product) =>
+            product.name.trim().toLowerCase() ===
+            item.productName.trim().toLowerCase()
+        );
+        if (!product) {
+          console.warn(`Product not found: ${item.productName}`); // Log missing products
+        }
+        const price = product ? product.price : 0;
+        return {
+          productName: item.productName,
+          calculatedValue: price * item.quantity, // Perform the calculation
+        };
+      });
+
+      console.log("Quantity-based Calculations:", quantityCalculations);
 
       return {
         id: order._id, // Unique ID for each order
