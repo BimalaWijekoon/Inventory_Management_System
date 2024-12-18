@@ -1,0 +1,125 @@
+_id,productId,productName,price,quantity,category,__v
+675f064b5e5f27097b9a530c,10,Black Shirt,90,1,Shirt,0
+675f07935e5f27097b9a5310,11,Black pants,69,2,Trousers,0
+675f1b25021bc1fe7359c652,01,Blue Shorts,5,2,Shorts,0
+675f1b52021bc1fe7359c654,02,Black Shorts,5,1,Shorts,0
+675f1b7e021bc1fe7359c657,03,Red Shorts,5,6,Shorts,0
+675f1b9e021bc1fe7359c659,04,Blue Shirt,10,2,Shirt,0
+675f1bc8021bc1fe7359c65e,05,Green Shirt,10,6,Shirt,0
+675f1c14021bc1fe7359c661,06,Grey Tshirt,8,1,Tshirt,0
+675f1c31021bc1fe7359c664,07,Yellow Tshirt,8,3,Tshirt,0
+675f1c4b021bc1fe7359c666,08,White Tshirt,8,5,Tshirt,0
+675f1cd3021bc1fe7359c669,09,Brown Pants,20,2,Trousers,0
+675f1ce6021bc1fe7359c66b,12,Grey Pants,20,4,Trousers,0
+675f1d20021bc1fe7359c66e,13,Canvas Shoes,30,5,Shoes,0
+675f1d72021bc1fe7359c670,14,Cleats,50,8,Shoes,0
+675f1d81021bc1fe7359c672,15,Boots,40,4,Shoes,0
+675f1db2021bc1fe7359c674,16,Low Cut Socks,4,10,Socks,0
+675f1de1021bc1fe7359c676,17,Anklets,5,9,Socks,0
+675f1e07021bc1fe7359c678,18,Mid calf Socks,8,15,Socks,0
+675fcbe23301e39477ec2051,19,Nike shoes,180,1,Shoes,0
+6761201d9eecfbcddb1c3414,20,Linen,20,2,Shirt,0
+676120459eecfbcddb1c3418,21,Black Shoes,50,1,Shoes,0
+676120599eecfbcddb1c341a,22,Beige Trousers,18,2,Trousers,0
+6761206d9eecfbcddb1c341c,23,Black Tshirt,8,3,Tshirt,0
+6761207d9eecfbcddb1c341e,24,Adidas Shoes,120,1,Shoes,0
+dae47ffb-847b-414d-be81-157c81dc8ac3,25,Navy Calvin Klein Swim Shorts,33.31,8,Shorts,0
+279d2c50-c1b7-458b-b8a5-51bf9c7a585e,26,Navy  Bomber Jacket,72.54,2,Jackets,0
+d474d3e2-54a9-4b81-b40b-9a7b8249bd93,27,Olive  Bomber Jacket,240.14,10,Jackets,0
+d96e5366-0d9f-41a2-b52b-734c774571b1,28,Navy Under Armour Cap,69.92,3,Accessories,0
+e2481aae-ffc7-49d7-bd5d-fe0ca5e92701,29,Olive  Denim Shorts,29.78,10,Shorts,0
+e9e0370a-7b7b-4e02-8ebe-9381abf186c7,30,Black  Joggers,60.5,1,Trousers,0
+f18cc7c4-d2b7-45b0-adc1-252c69a7e7b0,31,Blue  Athletic Shorts,45.23,14,Shorts,0
+9eb5acb0-317a-452c-85e1-f1fc9aee3f4f,32,Grey Adidas Belt,34.08,13,Accessories,0
+cf954689-6849-4530-a17b-a8d70ffe9ff5,33,Green Under Armour Cap,84.04,4,Accessories,0
+e5194b85-4c78-4a18-a986-6dbbe783ee86,34,Maroon Under Armour Cotton Shirt,75.7,4,Shirt,0
+1429676f-b88e-4bff-b66b-9fa303db3130,35,Red  Bomber Jacket,228.07,4,Jackets,0
+d5a61731-6b1c-4115-b28e-3cc81bd5885e,36,Blue Puma Cargo Pants,45.54,9,Trousers,0
+58fed557-8e7c-47fb-b60b-f251ed4ae339,37,Grey  Compression Socks,14.85,8,Socks,0
+a31ba037-dd2b-4f22-8952-7a2b41ba530b,38,Yellow  Belt,27.94,1,Accessories,0
+4bb5e4ed-f544-41e6-98a5-35b9911322a9,39,Grey  Dress Socks,17.79,2,Socks,0
+ebd0b420-a896-4332-b3e2-4062ea7f8f29,40,Brown  Crew Neck Tshirt,26.42,12,Tshirt,0
+25e909d3-67de-40fc-915a-a93a6cba3dda,41,Maroon Under Armour Basketball Shoes,81.04,6,Shoes,0
+99b07416-ad06-47be-873e-810ea2129114,42,Grey  Sneakers,183.76,1,Shoes,0
+5316e361-b28b-4034-917f-9bc945f305bd,43,Blue Levi's Belt,65.02,1,Accessories,0
+fd33570a-8fb5-49f1-87e1-d945a78db548,44,Yellow Calvin Klein Sunglasses,45.69,8,Accessories,0
+6877ffd8-5977-4502-80b4-bdfd80c15d28,45,Yellow  Sneakers,69.74,13,Shoes,0
+1e41f65a-eaad-4a9b-8013-1fd3147d7619,46,Red  Linen Shirt,85.17,9,Shirt,0
+fb8832a0-be08-4395-a9f0-d5cdcf58e390,47,White Puma Long Sleeve Tshirt,38.1,5,Tshirt,0
+6b0a1d67-4609-4496-a429-77f000f2ebba,48,Black  Wool Socks,13.67,15,Socks,0
+ba4da921-b8ef-42bd-a4fb-dbf41281faaa,49,Purple Calvin Klein Sports Tshirt,34.0,14,Tshirt,0
+0bb67ded-1e32-44a2-aa52-ffa4dd8b7ff2,50,Yellow Zara Hiking Shoes,206.55,15,Shoes,0
+184e2db7-e22f-4e2c-b10c-ad68b70d2ce0,51,Navy Levi's Long Sleeve Tshirt,20.67,15,Tshirt,0
+ca69b66b-bfde-4f80-b8db-3c7c152393f6,52,Olive  Watch,18.33,1,Accessories,0
+2b46c7e1-52b2-4962-af96-38f6e7dbd129,53,Grey  Compression Socks,12.03,7,Socks,0
+5f62ee9f-3914-4fed-ba30-e1b7940bd526,54,Green  Polo Shirt,75.43,7,Shirt,0
+74f51e0c-d8b9-4fd7-8770-d3450553128d,55,Purple  Cap,59.89,8,Accessories,0
+81b8f46a-0561-41f8-8480-f55fb9052df1,56,Maroon  Cardigan,123.81,7,Sweaters,0
+4f8e208b-3dfc-43e4-a31d-9332b2f84a31,57,Maroon Levi's Sports Tshirt,34.61,12,Tshirt,0
+118d11c1-d849-4b67-af82-32dba731e370,58,Purple Nike Basketball Shoes,88.43,9,Shoes,0
+9ca71da7-7eb4-4f5f-b713-a42b388eb80b,59,Brown  Dress Socks,17.96,10,Socks,0
+a62eeb90-fa80-437c-801f-3ad1b7da1baf,60,Black  Cargo Shorts,27.88,11,Shorts,0
+b5401fa3-1559-44c4-b85f-c0f90159a790,61,Olive  Running Shoes,207.76,4,Shoes,0
+5a4f01f2-738e-4591-a8f7-1457a57feaf5,62,White  Polo Shirt,70.83,12,Shirt,0
+cc5c62be-8b3a-4df7-83b4-a3128b505020,63,Brown  Chinos,117.49,4,Trousers,0
+b3d8eec1-bd52-4f91-82a2-a0e095a39f07,64,Brown Adidas Belt,78.68,14,Accessories,0
+94f045cc-b32b-48e3-bdc6-ac94296b2ef1,65,Navy Adidas Watch,68.25,6,Accessories,0
+44083a0d-e38c-494f-8701-16bfcd2d3086,66,Maroon  Athletic Shorts,36.05,2,Shorts,0
+f9541d10-67bc-4a09-8400-d6a6447f43bf,67,Grey Levi's Cargo Pants,80.17,6,Trousers,0
+df1ebd02-9e04-4683-8972-924a6022f4d1,68,Brown  Hiking Shoes,240.57,5,Shoes,0
+0a91f2d7-6159-44f9-8c43-4db8030430e1,69,Green  Cotton Shirt,71.13,11,Shirt,0
+6d822e05-d42b-4358-a521-2d86ce2eb43a,70,Grey  Scarf,22.11,2,Accessories,0
+aa44cbf4-47b2-4f78-9345-43ae59615683,71,Blue  Hiking Shoes,192.4,4,Shoes,0
+360ad48a-43e3-402a-af53-5af09443acce,72,Yellow  Crew Neck Tshirt,10.68,2,Tshirt,0
+798de392-d098-4eea-ab54-3c780ba9ebd1,73,Maroon  Swim Shorts,42.73,4,Shorts,0
+9eba7bfc-3c1e-4f1f-a80d-145df1e3fb92,74,Brown  Pullover,44.77,15,Sweaters,0
+f5de81af-72d9-4354-a718-d3a4a81d7906,75,Red  Crew Neck Tshirt,9.76,13,Tshirt,0
+58457e18-c04f-4473-a4bd-0f7d1c00949b,76,Purple  Watch,11.02,11,Accessories,0
+02bc3e3b-2058-464f-a398-77ece497205b,77,Green Zara Cargo Pants,45.71,7,Trousers,0
+799cd019-6b3d-4f43-ac7a-55defa4360b9,78,Green Adidas Dress Socks,15.21,10,Socks,0
+10a9e4ad-e13a-408d-8fa9-1af48dd5524d,79,Olive  Crew Neck Tshirt,22.01,14,Tshirt,0
+a7f06f0d-3240-4624-86f2-8765e16328be,80,Purple Under Armour Athletic Shorts,37.05,1,Shorts,0
+60242202-d32a-401c-8fee-77b0b1b11de2,81,Yellow Puma Bomber Jacket,142.26,9,Jackets,0
+35addb0c-5669-4780-a007-735499b947e3,82,Red  Wool Socks,5.93,6,Socks,0
+d6df38f8-0157-4c5b-bc0a-164f09e71d01,83,Brown Puma Sunglasses,44.02,4,Accessories,0
+d32cd198-3304-4df0-a4e3-cfdee9a3827a,84,Black Under Armour V-Neck Tshirt,34.06,13,Tshirt,0
+19da7ea7-f816-493e-a36d-c75916413367,85,Blue  Crew Neck Tshirt,19.77,12,Tshirt,0
+2d627525-5bd4-43e8-849e-28bbbfc01a54,86,Blue Under Armour Cargo Shorts,46.26,14,Shorts,0
+8dd06a43-80ae-4a47-bd35-de535517b55b,87,Black  Pullover,94.28,5,Sweaters,0
+6b3cb488-afa5-47e2-a079-52376a479c43,88,Grey H&M Dress Pants,52.6,6,Trousers,0
+532eb4f3-616b-493c-9bfe-acf09eb03de4,89,Navy  Linen Shirt,74.78,6,Shirt,0
+9f506ed5-9690-4d65-a4e3-443e797d8ef5,90,Maroon  Long Sleeve Tshirt,32.66,15,Tshirt,0
+a16f3d47-294f-43b5-865e-8ccfb095e1a3,91,White Nike Windbreaker,119.02,3,Jackets,0
+24695ecc-a9dc-4647-a9e6-15b241aa636f,92,White  Sports Tshirt,37.82,4,Tshirt,0
+192142fd-a7b9-41e1-86db-83aa136f0a2d,93,Navy  Cotton Shirt,52.39,9,Shirt,0
+ccc6b495-2d39-40e3-bf12-646da1201ed2,94,Green H&M Sports Tshirt,17.11,6,Tshirt,0
+bf3b2064-36de-4517-b387-bc9a0affeedc,95,White  Windbreaker,209.52,1,Jackets,0
+d10de7d6-ff21-416c-9a5f-c80a661aa6f6,96,Maroon  Denim Jacket,273.52,11,Jackets,0
+3e10381c-7219-47ba-b3b7-ef4923307224,97,Green  Crew Neck Tshirt,34.25,12,Tshirt,0
+fe981007-34bc-4ce9-a90c-e91575973599,98,Brown  Running Shoes,74.29,1,Shoes,0
+0406044f-4271-4a97-84e0-c8fd9983c17e,99,Olive  Sports Tshirt,17.88,6,Tshirt,0
+c1d8e2a5-c161-4474-a82f-2af76ddbbe31,100,Blue  Linen Shirt,69.79,13,Shirt,0
+2178eee9-b4b9-44d1-a4ec-327ffd33e68c,101,White Adidas Athletic Socks,17.16,3,Socks,0
+bffd83c4-f914-4867-8d98-1be168609908,102,Purple Under Armour Joggers,116.01,15,Trousers,0
+0b7adb43-08fb-42af-925f-f2c63d1248f6,103,Navy Zara Windbreaker,140.53,15,Jackets,0
+a27db40f-3d82-44a3-8d61-ed13dcc98142,104,Red  Sports Tshirt,33.46,2,Tshirt,0
+94a910dd-2a55-4574-b2ba-cd1bd25e6a31,105,Olive  Watch,51.85,1,Accessories,0
+1f0f0f0e-bb96-4c87-a89b-12a80f91b740,106,Red  Dress Pants,94.92,2,Trousers,0
+c02a0d86-e76a-414d-ae12-ad2cfc0f0096,107,Blue  Hoodie,94.23,13,Sweaters,0
+62ca2e76-042f-4f9e-8e83-82d869d7dc2b,108,Grey  Basketball Shoes,246.06,2,Shoes,0
+00e258ef-5edf-46a0-9415-70f5a8afd6b3,109,Green Calvin Klein Athletic Shorts,41.49,8,Shorts,0
+0bb5ecd4-e966-424c-a2f4-7babb0e185ce,110,Maroon  Pullover,127.3,12,Sweaters,0
+4144c84f-d930-44d0-81ed-09d8ac960993,111,Purple  Cardigan,30.23,7,Sweaters,0
+fee98d1b-682e-48be-a724-6cb381b02fd0,112,Maroon  Sneakers,103.41,15,Shoes,0
+79bac93e-0bb8-45bc-a22f-c65355502a29,113,White Zara Casual Shoes,98.65,4,Shoes,0
+26c9fa5e-b0b1-49b1-853a-09fbbbab8563,114,Brown  Sunglasses,98.2,3,Accessories,0
+8fab00ce-07a6-499c-aeb9-e63dc24f0c40,115,Navy  Pullover,34.45,8,Sweaters,0
+80c3ccda-9150-48fb-a47c-00feba16c111,116,Maroon  Cotton Shirt,50.48,8,Shirt,0
+2f551260-4be9-45dd-9c7d-9f3083f388fb,117,Grey  Wool Socks,18.69,7,Socks,0
+97cfb67f-b3c9-4aef-a4da-c03d81aee0fd,118,Blue H&M Casual Shoes,69.66,2,Shoes,0
+5937faaf-1c6d-4953-86ba-50cd401f31fa,119,Grey Puma Hiking Shoes,71.55,14,Shoes,0
+10366fb8-7db8-4b65-bff8-1493871bff0b,120,Brown  Dress Pants,44.22,11,Trousers,0
+d29331cd-1f3e-4107-9a00-cc9f3ac16d1f,121,Green Zara Crew Neck Tshirt,18.06,14,Tshirt,0
+641042b3-4d98-45ca-baa2-5a90738429bb,122,Navy  Running Shoes,176.82,7,Shoes,0
+d4b3f97c-cdae-4263-a105-9a4b5eb29cb4,123,Brown Puma Windbreaker,104.69,2,Jackets,0
+df941f3e-db5e-4c2f-b58a-28f08f3c38a6,124,Green  Flannel Shirt,31.89,13,Shirt,0
