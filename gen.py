@@ -1,6 +1,19 @@
 import csv
 import random
 import uuid
+import hashlib
+
+def generate_mongodb_id():
+    """Generate a 24-character hexadecimal string similar to MongoDB ObjectId."""
+    # Use UUID to generate a unique base
+    unique_base = str(uuid.uuid4())
+    
+    # Hash the base to get a consistent hexadecimal string
+    hash_object = hashlib.sha256(unique_base.encode())
+    hex_dig = hash_object.hexdigest()
+    
+    # Take first 24 characters to match MongoDB ObjectId format
+    return hex_dig[:24]
 
 # Predefined categories and product types
 categories = ['Shirt', 'Trousers', 'Shorts', 'Tshirt', 'Shoes', 'Socks', 'Accessories', 'Jackets', 'Sweaters']
@@ -42,7 +55,7 @@ def generate_product_price(category):
     low, high = price_ranges[category]
     return round(random.uniform(low, high), 2)
 
-def generate_additional_rows(existing_ids, num_rows=50):
+def generate_additional_rows(existing_ids, num_rows=150):
     new_rows = []
     start_id = max(existing_ids) + 1 if existing_ids else 25
 
@@ -53,7 +66,7 @@ def generate_additional_rows(existing_ids, num_rows=50):
         quantity = random.randint(1, 15)
         
         row = {
-            '_id': str(uuid.uuid4()),
+            '_id': generate_mongodb_id(),  # Generate MongoDB-style ID
             'productId': start_id + i,
             'productName': product_name,
             'price': price,
@@ -65,7 +78,6 @@ def generate_additional_rows(existing_ids, num_rows=50):
 
     return new_rows
 
-# Example usage
 def main():
     # Read existing IDs from the original file
     with open('test.products.csv', 'r') as f:

@@ -30,85 +30,72 @@ export default class OrderList extends Component {
     }
   };
 
-  // Fetch orders from the backend
+  fetchProducts = async () => {
+    try {
+      const productResponse = await axios.get("http://localhost:5000/api/products");
+      const products = productResponse.data.map((product) => ({
+        ...product,
+        id: product._id, // Ensure compatibility with DataGrid row structure
+      }));
+  
+      // Create a map for quick lookups
+      const productsMap = products.reduce((map, product) => {
+        map[product._id] = product; // Use product._id as the key
+        return map;
+      }, {});
+  
+      this.setState({ productsMap }); // Store the map in state for lookup
+      console.log("Fetched Products:", products);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  
   fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/orders"); // Call the backend API
-      const orders = response.data.orders || []; // Extract orders from the response
-      console.log("Fetched Orders: ", orders); // Debug fetched orders
-      const rows = this.processOrders(orders); // Transform orders for DataGrid
-      this.setState({ orders: rows }); // Update state with processed orders
+      const response = await axios.get("http://localhost:5000/api/orders");
+      const orders = response.data.orders || [];
+      console.log("Fetched Orders:", orders);
+  
+      const rows = this.processOrders(orders);
+      this.setState({ orders: rows });
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
   };
 
-  // Fetch product prices from the backend
-  fetchProducts = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/products"); // Call the backend API for products
-      const products = response.data.products || []; // Extract the product prices from the response
-      console.log("Fetched Products: ", products); // Debug fetched products
-      this.setState({ products }); // Update state with product prices
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
-  // Process orders into DataGrid row format
   processOrders = (orders) => {
+    const { productsMap } = this.state; // Access the product lookup map
+  
     return orders.map((order) => {
-      // Prepare items as a string (e.g., "2 x Blue Shirt, 1 x Nike Shoes")
+      // Combine items into a readable string
       const items = order.items
-        .map(
-          (item) =>
-            `${item.quantity} x ${item.productName}` // Format each item
-        )
+        .map((item) => `${item.quantity} x ${item.productName}`)
         .join(", ");
-
-      // Calculate the total price for this order using the fetched product prices
+  
+      // Calculate the total price using the product map
       const totalPrice = order.items.reduce((sum, item) => {
-        const product = this.state.products.find(
-          (product) =>
-            product.name.trim().toLowerCase() ===
-            item.productName.trim().toLowerCase() // Match case-insensitively
-        );
+        const product = productsMap[item.productId]; // Lookup product by productId
+  
         if (!product) {
-          console.warn(`Product not found: ${item.productName}`); // Log missing products
+          console.warn(`Product not found: ${item.productId}`);
+          return sum; // Skip if product not found
         }
-        const price = product ? product.price : 0; // Use the price from the product table, default to 0 if not found
-        return sum + price * item.quantity; // Add (price * quantity) to the total
+  
+        return sum + product.price * item.quantity;
       }, 0);
-
-      // Additional quantity-based calculation for each item
-      const quantityCalculations = order.items.map((item) => {
-        const product = this.state.products.find(
-          (product) =>
-            product.name.trim().toLowerCase() ===
-            item.productName.trim().toLowerCase()
-        );
-        if (!product) {
-          console.warn(`Product not found: ${item.productName}`); // Log missing products
-        }
-        const price = product ? product.price : 0;
-        return {
-          productName: item.productName,
-          calculatedValue: price * item.quantity, // Perform the calculation
-        };
-      });
-
-      console.log("Quantity-based Calculations:", quantityCalculations);
-
+  
       return {
-        id: order._id, // Unique ID for each order
+        id: order._id,
         orderId: order._id,
         customerName: order.customerName,
-        items, // All items as a single string
-        totalPrice: totalPrice.toFixed(2), // Total price for the order
-        fullOrder: order, // Include the full order for "View Details"
+        items,
+        totalPrice: totalPrice.toFixed(2), // Format to 2 decimal places
+        fullOrder: order,
       };
     });
   };
+  
 
   handleOrderDetail = (order) => {
     this.setState({ selectedOrder: order, open: true });
