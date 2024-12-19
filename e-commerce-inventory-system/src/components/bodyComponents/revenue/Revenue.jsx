@@ -1,53 +1,103 @@
 import React, { Component } from "react";
+import axios from "axios";
 import RevenueCard from "./RevenueCard";
-import { Box, Grid, Paper } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import RevenueCostChart from "./RevenueCostChart";
 import BestSelledProductChart from "./BestSelledProductChart";
 import BestSelledProductChartBar from "./BestSelledProductChartBar";
 
 export default class Revenue extends Component {
+  state = {
+    totalOrders: 0,
+    totalProducts: 0,
+    totalProductsSold: 0,
+    totalRevenue: 0,
+  };
+
+  fetchProducts = async () => {
+    try {
+      const productResponse = await axios.get("http://localhost:5000/api/products");
+      const products = productResponse.data;
+      return products;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return [];
+    }
+  };
+
+  fetchOrders = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/orders");
+      const orders = response.data.orders || [];
+      return orders;
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      return [];
+    }
+  };
+
+  calculateStats = async () => {
+    const products = await this.fetchProducts();
+    const orders = await this.fetchOrders();
+
+    const currentYear = new Date().getFullYear();
+    let totalProductsSold = 0;
+    let totalRevenue = 0;
+
+    orders.forEach((order) => {
+      const orderYear = new Date(order.createdAt).getFullYear();
+      if (orderYear === currentYear) {
+        totalProductsSold += order.items.reduce((sum, item) => sum + item.quantity, 0);
+        totalRevenue += order.items.reduce((sum, item) => {
+          const product = products.find((p) => p._id === item.productId);
+          return product ? sum + product.price * item.quantity : sum;
+        }, 0);
+      }
+    });
+
+    this.setState({
+      totalOrders: orders.length,
+      totalProducts: products.length,
+      totalProductsSold,
+      totalRevenue: totalRevenue.toFixed(2),
+    });
+  };
+
+  componentDidMount() {
+    this.calculateStats();
+  }
+
   render() {
-    const revenuCards = [
+    const { totalOrders, totalProducts, totalProductsSold, totalRevenue } = this.state;
+
+    const revenueCards = [
       {
-        isMoney: true,
-        number: "23 000",
-        percentage: 55,
-        upOrDown: "up",
-        color: "green",
-        title: "Total Sales This Year",
-        subTitle: "vs prev year",
+        isMoney: false,
+        number: totalOrders,
+        title: "Total Orders This Year",
+      },
+      {
+        isMoney: false,
+        number: totalProducts,
+        title: "Total Products",
+      },
+      {
+        isMoney: false,
+        number: totalProductsSold,
+        title: "Products Sold This Year",
       },
       {
         isMoney: true,
-        number: "3500",
-        percentage: 70,
-        upOrDown: "up",
-        color: "green",
+        number: totalRevenue,
         title: "Revenue This Year",
-        subTitle: "vs prev year",
-      },
-      {
-        isMoney: true,
-        number: "2000",
-        percentage: 12,
-        upOrDown: "down",
-        color: "red",
-        title: "Cost This Year",
-        subTitle: "vs prev year",
-      },
-      {
-        isMoney: true,
-        number: "98 000",
-        percentage: undefined,
-        title: "Revenue Total",
-        subTitle: "vs prev year",
       },
     ];
+
     return (
       <Box sx={{ p: 3, mx: 3 }}>
         <Grid container sx={{ mx: 4 }}>
-          {revenuCards.map((card) => (
-            <Grid item md={3}>
+          {revenueCards.map((card, index) => (
+            <Grid item md={3} key={index}>
               <Box m={4}>
                 <RevenueCard card={card} />
               </Box>

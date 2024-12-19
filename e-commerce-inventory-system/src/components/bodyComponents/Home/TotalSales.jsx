@@ -1,19 +1,12 @@
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ApexCharts from "react-apexcharts";
+import axios from "axios";
 
 export default function TotalSales() {
-  const options = {
+  const [options, setOptions] = useState({
     title: {
       text: "Total Sales",
-      align: "left",
-      style: {
-        fontSize: "16px",
-        color: "#666",
-      },
-    },
-    subtitle: {
-      text: "Sales over time",
       align: "left",
       style: {
         fontSize: "16px",
@@ -23,27 +16,6 @@ export default function TotalSales() {
     stroke: {
       curve: "smooth",
       width: 3,
-    },
-    legend: {
-      customLegendItems: [
-        "current Week  <b>$0<b/>",
-        "Previous Week <b>$0<b/>",
-      ],
-      position: "top",
-      horizontalAlign: "center",
-      fontSize: "14px",
-      fontFamily: "Helvetica, Arial",
-      offsetY: -20,
-    },
-    markers: {
-      size: 4,
-      strokeWidth: 2,
-      hover: {
-        size: 9,
-      },
-    },
-    theme: {
-      mode: "light",
     },
     chart: {
       height: 328,
@@ -60,20 +32,94 @@ export default function TotalSales() {
       },
     },
     xaxis: {
-      categories: ["Mon", "Thu", "Wed", "The", "Fri", "Sat", "Sun"],
+      categories: [], // Days of the week
     },
-  };
-  const series = [
+  });
+
+  const [series, setSeries] = useState([
     {
-      type: "line", //here we can define multiple type of chart in the same box
-      name: "series-1",
-      data: [0, 0, 0, 0, 0, 0, 0],
+      name: "Total Sales",
+      data: [], // Total sales per day
     },
-    {
-      name: "series-2",
-      data: [0, 0, 0, 0, 0, 0, 0],
-    },
-  ];
+  ]);
+
+  useEffect(() => {
+    const fetchProductsAndOrders = async () => {
+      try {
+        // Fetch product data
+        const productResponse = await axios.get("http://localhost:5000/api/products");
+        const products = productResponse.data;
+        const productsMap = products.reduce((map, product) => {
+          map[product._id] = product;
+          return map;
+        }, {});
+
+        // Fetch order data
+        const orderResponse = await axios.get("http://localhost:5000/api/orders");
+        const orders = orderResponse.data.orders || [];
+
+        // Get all days of the current week
+        const getCurrentWeekDays = () => {
+          const currentDate = new Date();
+          const firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1)); // Monday
+          const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
+            const day = new Date(firstDayOfWeek);
+            day.setDate(firstDayOfWeek.getDate() + i);
+            return day.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+          });
+          return daysOfWeek;
+        };
+
+        const weekDays = getCurrentWeekDays();
+
+        // Initialize sales for each day
+        const salesByDay = weekDays.reduce((acc, day) => {
+          acc[day] = 0;
+          return acc;
+        }, {});
+
+        // Process orders
+        orders.forEach((order) => {
+          const orderDay = new Date(order.createdAt).toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          });
+
+          const totalOrderAmount = order.items.reduce((sum, item) => {
+            const product = productsMap[item.productId]; // Lookup product
+            return product ? sum + product.price * item.quantity : sum; // Sum up item totals
+          }, 0);
+
+          if (salesByDay[orderDay] !== undefined) {
+            salesByDay[orderDay] += totalOrderAmount;
+          }
+        });
+
+        // Prepare data for the chart
+        const categories = Object.keys(salesByDay); // Days of the week
+        const data = Object.values(salesByDay); // Total sales for each day
+
+        // Update chart options and series
+        setOptions((prev) => ({
+          ...prev,
+          xaxis: { categories },
+        }));
+
+        setSeries([
+          {
+            name: "Total Sales",
+            data,
+          },
+        ]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchProductsAndOrders();
+  }, []);
+
   return (
     <Box
       sx={{

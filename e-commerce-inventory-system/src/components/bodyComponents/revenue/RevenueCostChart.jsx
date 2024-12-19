@@ -1,44 +1,90 @@
 import React, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
 import { Box } from "@mui/material";
+import axios from "axios";
 
 export default function RevenueCostChart() {
   const [channelData, setChannelData] = useState([]);
 
-  useEffect(() => {
-    setChannelData([
-      {
-        name: "Revenue",
-        type: "column",
-        data: [141, 250, 260, 270, 300, 330, 360, 400, 420, 1000, 1300, 1600],
-      },
-      {
-        name: "Cost",
-        type: "column",
-        data: [341, 350, 460, 370, 400, 140, 150, 120, 220, 700, 300, 600],
-      },
-    ]);
-
-    return () => {
-      setChannelData([]);
-    };
-  }, []);
-
-  let totalArray = [];
-  const total = channelData.forEach((value) => {
-    const data = value.data;
-    if (totalArray.length === 0) totalArray = [...data];
-    else {
-      data.forEach((val, index) => (totalArray[index] += val));
+  const fetchProducts = async () => {
+    try {
+      const productResponse = await axios.get("http://localhost:5000/api/products");
+      const products = productResponse.data;
+      return products.reduce((map, product) => {
+        map[product._id] = product;
+        return map;
+      }, {});
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return {};
     }
-  });
+  };
+
+  const fetchOrders = async (productsMap) => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/orders");
+      const orders = response.data.orders || [];
+      return orders.map((order) => {
+        const totalPrice = order.items.reduce((sum, item) => {
+          const product = productsMap[item.productId];
+          return product ? sum + product.price * item.quantity : sum;
+        }, 0);
+        return { ...order, totalPrice };
+      });
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      return [];
+    }
+  };
+
+  const calculateMonthlyData = (orders) => {
+    const revenueByMonth = Array(12).fill(0); // Initialize revenue for each month
+    const currentYear = new Date().getFullYear();
+
+    orders.forEach((order) => {
+      const orderDate = new Date(order.createdAt);
+      if (orderDate.getFullYear() === currentYear) {
+        const month = orderDate.getMonth();
+        revenueByMonth[month] += order.totalPrice;
+      }
+    });
+
+    const costByMonth = revenueByMonth.map((revenue) =>
+      revenue > 0 ? Math.random() * (1.2 * revenue - 0.8 * revenue) + 0.8 * revenue : 0
+    );
+
+    return { revenueByMonth, costByMonth };
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const productsMap = await fetchProducts();
+      const orders = await fetchOrders(productsMap);
+      const { revenueByMonth, costByMonth } = calculateMonthlyData(orders);
+
+      setChannelData([
+        {
+          name: "Revenue",
+          type: "column",
+          data: revenueByMonth,
+        },
+        {
+          name: "Cost",
+          type: "column",
+          data: costByMonth.map((value) => parseFloat(value.toFixed(2))),
+        },
+      ]);
+    };
+
+    fetchData();
+  }, []);
 
   const options3 = {
     colors: ["#00D100", "#FF2E2E"],
     chart: {
-      id: "basic-bar",
+      id: "revenue-cost-chart",
       type: "bar",
-      stacked: false, //one on top of another
+      stacked: false,
     },
     dataLabels: {
       enabled: false,
@@ -69,8 +115,8 @@ export default function RevenueCostChart() {
         "May",
         "Jun",
         "Jul",
-        "Aut",
-        "Spt",
+        "Aug",
+        "Sep",
         "Oct",
         "Nov",
         "Dec",
@@ -79,12 +125,13 @@ export default function RevenueCostChart() {
     tooltip: {
       fixed: {
         enabled: true,
-        position: "topLeft", // topRight, topLeft, bottomRight, bottomLeft
+        position: "topLeft",
         offsetY: 30,
         offsetX: 60,
       },
     },
   };
+
   return (
     <Box
       sx={{

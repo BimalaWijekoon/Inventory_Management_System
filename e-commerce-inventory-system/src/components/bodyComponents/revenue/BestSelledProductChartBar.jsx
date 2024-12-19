@@ -1,20 +1,57 @@
 import React, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
+import axios from "axios";
 import { Box } from "@mui/material";
 
 export default function BestSelledProductChartBar() {
   const [channelData, setChannelData] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    setChannelData([
-      {
-        data: [3400, 3500, 3000, 4000, 4699],
-      },
-    ]);
+    const fetchData = async () => {
+      try {
+        // Fetch products
+        const productResponse = await axios.get("http://localhost:5000/api/products");
+        const products = productResponse.data.reduce((map, product) => {
+          map[product._id] = { ...product, totalSold: 0 }; // Initialize totalSold
+          return map;
+        }, {});
 
-    return () => {
-      setChannelData([]);
+        // Fetch orders
+        const orderResponse = await axios.get("http://localhost:5000/api/orders");
+        const orders = orderResponse.data.orders || [];
+
+        // Calculate total sold for each product over the year
+        orders.forEach((order) => {
+          const orderDate = new Date(order.createdAt);
+          if (orderDate.getFullYear() === new Date().getFullYear()) {
+            order.items.forEach((item) => {
+              if (products[item.productId]) {
+                products[item.productId].totalSold += item.quantity;
+              }
+            });
+          }
+        });
+
+        // Get top 5 products based on total sold
+        const topProducts = Object.values(products)
+          .filter((product) => product.totalSold > 0) // Exclude unsold products
+          .sort((a, b) => b.totalSold - a.totalSold) // Sort by totalSold
+          .slice(0, 5); // Take top 5
+
+        // Prepare chart data
+        setChannelData([
+          {
+            data: topProducts.map((product) => product.totalSold),
+          },
+        ]);
+        setCategories(topProducts.map((product) => product.productName));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
+
+    fetchData();
   }, []);
 
   const options3 = {
@@ -22,7 +59,7 @@ export default function BestSelledProductChartBar() {
     chart: {
       id: "basic-bar",
       type: "bar",
-      stacked: true, //one on top of another
+      stacked: true,
     },
     dataLabels: {
       enabled: false,
@@ -33,7 +70,7 @@ export default function BestSelledProductChartBar() {
       offsetY: 0,
     },
     title: {
-      text: "Top 5 Selled Product Over Year",
+      text: "Top 5 Best-Selling Products Over the Year",
     },
     plotOptions: {
       bar: {
@@ -42,25 +79,19 @@ export default function BestSelledProductChartBar() {
         horizontal: true,
       },
     },
-
     xaxis: {
-      categories: [
-        "product 1",
-        "product 2",
-        "product 3",
-        "product 4",
-        "product 5",
-      ],
+      categories: categories,
     },
     tooltip: {
       fixed: {
         enabled: true,
-        position: "topLeft", // topRight, topLeft, bottomRight, bottomLeft
+        position: "topLeft",
         offsetY: 30,
         offsetX: 60,
       },
     },
   };
+
   return (
     <Box
       sx={{

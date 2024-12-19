@@ -55,15 +55,6 @@ export default function SideBarComponent() {
       title: "Revenue",
       component: <MonetizationOnOutlined fontSize="medium" color="primary" />,
     },
-    {
-      title: "Growth",
-      component: <TrendingUpOutlined fontSize="medium" color="primary" />,
-    },
-    
-    {
-      title: "Settings",
-      component: <SettingsOutlined fontSize="medium" color="primary" />,
-    },
   ];
   const [selected, setSelected] = useState(0);
   const handlSelectedComponent = (event, index) => {

@@ -1,37 +1,61 @@
 import React, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
+import axios from "axios";
 import { Box } from "@mui/material";
 
 export default function BestSelledProductChart() {
   const [channelData, setChannelData] = useState([]);
 
-  useEffect(() => {
-    setChannelData([
-      {
-        name: "product 1",
-        data: [14, 25, 20, 20, 30, 99],
-      },
-      {
-        name: "product 2",
-        data: [99, 94, 21, 70, 10, 54],
-      },
-      {
-        name: "product 3",
-        data: [41, 53, 41, 66, 20, 12],
-      },
-      {
-        name: "product 4",
-        data: [59, 51, 12, 5, 40, 27],
-      },
-      {
-        name: "product 5",
-        data: [67, 62, 69, 35, 86, 69],
-      },
-    ]);
+  const isSameWeek = (date) => {
+    const now = new Date();
+    const inputDate = new Date(date);
+    const diffInDays = Math.floor((now - inputDate) / (1000 * 60 * 60 * 24));
+    return diffInDays < 7 && now.getDay() >= inputDate.getDay();
+  };
 
-    return () => {
-      setChannelData([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch products
+        const productResponse = await axios.get("http://localhost:5000/api/products");
+        const products = productResponse.data.reduce((map, product) => {
+          map[product._id] = { ...product, weeklyData: [0, 0, 0, 0, 0, 0, 0] }; // Initialize weekly data
+          return map;
+        }, {});
+
+        // Fetch orders
+        const orderResponse = await axios.get("http://localhost:5000/api/orders");
+        const orders = orderResponse.data.orders || [];
+
+        // Calculate weekly data for each product
+        orders.forEach((order) => {
+          const orderDate = new Date(order.createdAt);
+          if (isSameWeek(orderDate)) {
+            const dayOfWeek = orderDate.getDay(); // Get day index (0: Sunday, 6: Saturday)
+            order.items.forEach((item) => {
+              if (products[item.productId]) {
+                products[item.productId].weeklyData[dayOfWeek] += item.quantity;
+              }
+            });
+          }
+        });
+
+        // Transform data into chart series format
+        const chartData = Object.values(products)
+          .filter((product) => product.weeklyData.some((quantity) => quantity > 0)) // Exclude products with no sales
+          .slice(0, 5) // Take top 5 products
+          .map((product) => ({
+            name: product.productName,
+            data: product.weeklyData,
+          }));
+
+        setChannelData(chartData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
+
+    fetchData();
   }, []);
 
   const options3 = {
@@ -48,7 +72,7 @@ export default function BestSelledProductChart() {
       offsetY: 0,
     },
     title: {
-      text: "Top 5 Selled Product last Week",
+      text: "Top 5 Best-Selling Products This Week",
     },
     plotOptions: {
       bar: {
@@ -71,17 +95,18 @@ export default function BestSelledProductChart() {
       opacity: 1,
     },
     xaxis: {
-      categories: ["Mon", "Thu", "Web", "Tue", "Fri", "Sat", "Sun"],
+      categories: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     },
     tooltip: {
       fixed: {
         enabled: true,
-        position: "topLeft", // topRight, topLeft, bottomRight, bottomLeft
+        position: "topLeft",
         offsetY: 30,
         offsetX: 60,
       },
     },
   };
+
   return (
     <Box
       sx={{

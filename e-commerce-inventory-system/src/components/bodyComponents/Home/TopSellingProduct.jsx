@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Table,
@@ -11,33 +12,45 @@ import {
 } from "@mui/material";
 
 export default function TopSellingProduct() {
-  const products = [
-    { name: "Addidas White Pair", price: 25.0, quantity: 30 },
-    { name: "Nike Black Pair", price: 45.0, quantity: 28 },
-    { name: "Black Linen Shirt", price: 15.0, quantity: 27 },
-    { name: "Beige Pants", price: 20.0, quantity: 25 },
-    { name: "Black Shorts", price: 18.0, quantity: 20 },
-  ];
+  const [topProducts, setTopProducts] = useState([]);
 
-  // Recursive function to calculate amounts
-  const calculateAmounts = (products, index = 0) => {
-    // Base case: If index is out of bounds, return an empty array
-    if (index >= products.length) {
-      return [];
-    }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch products
+        const productResponse = await axios.get("http://localhost:5000/api/products");
+        const products = productResponse.data.reduce((map, product) => {
+          map[product._id] = { ...product, quantitySold: 0 }; // Initialize quantitySold
+          return map;
+        }, {});
 
-    // Calculate amount for the current product
-    const currentAmount = {
-      ...products[index],
-      amount: products[index].price * products[index].quantity,
+        // Fetch orders
+        const orderResponse = await axios.get("http://localhost:5000/api/orders");
+        const orders = orderResponse.data.orders || [];
+
+        // Calculate total quantity sold for each product
+        orders.forEach((order) => {
+          order.items.forEach((item) => {
+            if (products[item.productId]) {
+              products[item.productId].quantitySold += item.quantity;
+            }
+          });
+        });
+
+        // Get top 5 products based on quantity sold
+        const topProductsArray = Object.values(products)
+          .filter((product) => product.quantitySold > 0) // Exclude unsold products
+          .sort((a, b) => b.quantitySold - a.quantitySold) // Sort by quantity sold
+          .slice(0, 5); // Take top 5
+
+        setTopProducts(topProductsArray);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
-    // Recursive call for the remaining products
-    return [currentAmount, ...calculateAmounts(products, index + 1)];
-  };
-
-  // Get updated products with amounts
-  const updatedProducts = calculateAmounts(products);
+    fetchData();
+  }, []);
 
   return (
     <Box
@@ -58,17 +71,17 @@ export default function TopSellingProduct() {
             <TableRow>
               <TableCell sx={{ fontWeight: "bolder" }}>Name</TableCell>
               <TableCell sx={{ fontWeight: "bolder" }}>Price</TableCell>
-              <TableCell sx={{ fontWeight: "bolder" }}>Quantity</TableCell>
-              <TableCell sx={{ fontWeight: "bolder" }}>Amount</TableCell>
+              <TableCell sx={{ fontWeight: "bolder" }}>Quantity Sold</TableCell>
+              <TableCell sx={{ fontWeight: "bolder" }}>Total Amount</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {updatedProducts.map((product, id) => (
-              <TableRow key={id}>
-                <TableCell>{product.name}</TableCell>
+            {topProducts.map((product) => (
+              <TableRow key={product._id}>
+                <TableCell>{product.productName}</TableCell>
                 <TableCell>${product.price.toFixed(2)}</TableCell>
-                <TableCell>{product.quantity}</TableCell>
-                <TableCell>${product.amount.toFixed(2)}</TableCell>
+                <TableCell>{product.quantitySold}</TableCell>
+                <TableCell>${(product.price * product.quantitySold).toFixed(2)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
