@@ -29,7 +29,7 @@ export default class Home extends Component {
   // Fetch orders and calculate today's sales
   fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/orders");
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
       const orders = response.data.orders || [];
 
       // Calculate today's sales count
@@ -56,7 +56,7 @@ export default class Home extends Component {
   // Fetch products to get inventory count
   fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/products");
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
       const products = response.data || [];
       const inventoryCount = products.length;
 

@@ -78,7 +78,7 @@ export default function AddProduct() {
 
     // Send the POST request only if form is valid
     axios
-      .post("http://localhost:5000/api/products", { productId, productName, price, quantity, category })
+      .post(`${import.meta.env.VITE_API_URL}/api/products`, { productId, productName, price, quantity, category })
       .then((response) => {
         console.log("Product added:", response.data);
         setSuccessMessage("Product successfully added!");

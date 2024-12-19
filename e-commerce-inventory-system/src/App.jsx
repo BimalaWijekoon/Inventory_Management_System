@@ -8,7 +8,7 @@ import Growth from "./components/bodyComponents/growth/Growth";
 import Setting from "./components/bodyComponents/Settings/Setting";
 import Order from "./components/bodyComponents/order/Order";
 import AddProduct from "./components/bodyComponents/inventory/add-product";
-import AddOrder from "./components/bodyComponents/order/AddOrder"; // Ensure AddOrder is correctly imported
+import AddOrder from "./components/bodyComponents/order/addorder"; // Ensure AddOrder is correctly imported
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router-dom";
 import Inter from "../public/static/fonts/Inter.ttf"; // Ensure this path is correct
 

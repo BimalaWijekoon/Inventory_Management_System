@@ -32,7 +32,7 @@ export default class OrderList extends Component {
 
   fetchProducts = async () => {
     try {
-      const productResponse = await axios.get("http://localhost:5000/api/products");
+      const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
       const products = productResponse.data.map((product) => ({
         ...product,
         id: product._id, // Ensure compatibility with DataGrid row structure
@@ -53,7 +53,7 @@ export default class OrderList extends Component {
   
   fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/orders");
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
       const orders = response.data.orders || [];
       console.log("Fetched Orders:", orders);
   

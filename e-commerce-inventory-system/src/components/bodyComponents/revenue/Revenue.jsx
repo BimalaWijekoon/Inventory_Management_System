@@ -16,7 +16,7 @@ export default class Revenue extends Component {
 
   fetchProducts = async () => {
     try {
-      const productResponse = await axios.get("http://localhost:5000/api/products");
+      const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
       const products = productResponse.data;
       return products;
     } catch (error) {
@@ -27,7 +27,7 @@ export default class Revenue extends Component {
 
   fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/orders");
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
       const orders = response.data.orders || [];
       return orders;
     } catch (error) {

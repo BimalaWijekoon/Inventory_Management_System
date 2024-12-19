@@ -8,7 +8,7 @@ export default function RevenueCostChart() {
 
   const fetchProducts = async () => {
     try {
-      const productResponse = await axios.get("http://localhost:5000/api/products");
+      const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
       const products = productResponse.data;
       return products.reduce((map, product) => {
         map[product._id] = product;
@@ -22,7 +22,7 @@ export default function RevenueCostChart() {
 
   const fetchOrders = async (productsMap) => {
     try {
-      const response = await axios.get("http://localhost:5000/api/orders");
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
       const orders = response.data.orders || [];
       return orders.map((order) => {
         const totalPrice = order.items.reduce((sum, item) => {

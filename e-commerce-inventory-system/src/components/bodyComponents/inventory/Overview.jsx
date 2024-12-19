@@ -14,7 +14,7 @@ export default function Overview() {
     const fetchData = async () => {
       try {
         // Fetch all products
-        const productResponse = await axios.get("http://localhost:5000/api/products");
+        const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
         const products = productResponse.data;
 
         // Extract price and quantity into separate arrays
@@ -41,7 +41,7 @@ export default function Overview() {
         setTotalProducts(totalQuantity);
 
         // Fetch total orders and calculate total order items
-        const orderResponse = await axios.get("http://localhost:5000/api/orders");
+        const orderResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
         const orders = orderResponse.data.orders;
 
         // Sum up the quantities of items in each order

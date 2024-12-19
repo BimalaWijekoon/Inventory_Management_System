@@ -17,14 +17,14 @@ export default function BestSelledProductChart() {
     const fetchData = async () => {
       try {
         // Fetch products
-        const productResponse = await axios.get("http://localhost:5000/api/products");
+        const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
         const products = productResponse.data.reduce((map, product) => {
           map[product._id] = { ...product, weeklyData: [0, 0, 0, 0, 0, 0, 0] }; // Initialize weekly data
           return map;
         }, {});
 
         // Fetch orders
-        const orderResponse = await axios.get("http://localhost:5000/api/orders");
+        const orderResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
         const orders = orderResponse.data.orders || [];
 
         // Calculate weekly data for each product

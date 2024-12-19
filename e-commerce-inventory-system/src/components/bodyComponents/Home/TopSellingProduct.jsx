@@ -18,14 +18,14 @@ export default function TopSellingProduct() {
     const fetchData = async () => {
       try {
         // Fetch products
-        const productResponse = await axios.get("http://localhost:5000/api/products");
+        const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
         const products = productResponse.data.reduce((map, product) => {
           map[product._id] = { ...product, quantitySold: 0 }; // Initialize quantitySold
           return map;
         }, {});
 
         // Fetch orders
-        const orderResponse = await axios.get("http://localhost:5000/api/orders");
+        const orderResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
         const orders = orderResponse.data.orders || [];
 
         // Calculate total quantity sold for each product

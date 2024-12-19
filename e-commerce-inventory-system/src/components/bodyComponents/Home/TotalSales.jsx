@@ -47,7 +47,7 @@ export default function TotalSales() {
     const fetchProductsAndOrders = async () => {
       try {
         // Fetch product data
-        const productResponse = await axios.get("http://localhost:5000/api/products");
+        const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
         const products = productResponse.data;
         const productsMap = products.reduce((map, product) => {
           map[product._id] = product;
@@ -55,7 +55,7 @@ export default function TotalSales() {
         }, {});
 
         // Fetch order data
-        const orderResponse = await axios.get("http://localhost:5000/api/orders");
+        const orderResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
         const orders = orderResponse.data.orders || [];
 
         // Get all days of the current week

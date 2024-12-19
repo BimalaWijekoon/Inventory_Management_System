@@ -16,8 +16,8 @@ export default function Products() {
   // Fetch products and orders
   const fetchProducts = async () => {
     try {
-      const productResponse = await axios.get("http://localhost:5000/api/products");
-      const orderResponse = await axios.get("http://localhost:5000/api/orders");
+      const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
+      const orderResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
 
       const products = productResponse.data.map((product) => ({
         ...product,

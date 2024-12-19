@@ -19,7 +19,7 @@ export default class SalesByCategory extends Component {
   fetchProductsAndOrders = async () => {
     try {
       // Fetch products
-      const productResponse = await axios.get("http://localhost:5000/api/products");
+      const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
       const products = productResponse.data.map((product) => ({
         ...product,
         id: product._id,
@@ -32,7 +32,7 @@ export default class SalesByCategory extends Component {
       }, {});
 
       // Fetch orders
-      const orderResponse = await axios.get("http://localhost:5000/api/orders");
+      const orderResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`);
       const orders = orderResponse.data.orders || [];
 
       // Calculate sales by category
