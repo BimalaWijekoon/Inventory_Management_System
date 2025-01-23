@@ -22,7 +22,7 @@ export default function Products() {
 
       const products = productResponse.data.map((product) => ({
         ...product,
-        id: product._id,
+        id: product._id, // Assign a unique `id` for DataGrid
       }));
       const updatedProducts = adjustProductQuantities(products, orderResponse.data.orders);
 
@@ -56,7 +56,7 @@ export default function Products() {
   };
 
   const handleCategoryChange = (e) => {
-    const category = e.target.value.toLowerCase();
+    const category = e.target.value;
     setCategoryQuery(category);
     filterProducts(searchQuery, category, sortKey);
   };
@@ -72,11 +72,15 @@ export default function Products() {
       (product) =>
         (product.productId.toLowerCase().includes(search) ||
           product.productName.toLowerCase().includes(search)) &&
-        (category === "" || product.category.toLowerCase().includes(category))
+        (category === "" || product.category === category)
     );
 
     if (sortKey) {
-      filtered = mergeSort(filtered, sortKey);
+      filtered = mergeSort(filtered, (a, b) => {
+        if (a[sortKey] < b[sortKey]) return -1;
+        if (a[sortKey] > b[sortKey]) return 1;
+        return 0;
+      });
     }
 
     setFilteredProducts(filtered);
