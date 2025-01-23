@@ -2,18 +2,19 @@ import React, { useState, useEffect } from "react";
 import Product from "./Product";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
+import { mergeSort } from "./sorting"; // Import mergeSort
 
 export default function Products() {
-  const [allProducts, setAllProducts] = useState([]); // All products state
-  const [filteredProducts, setFilteredProducts] = useState([]); // Filtered products for display
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryQuery, setCategoryQuery] = useState("");
+  const [sortKey, setSortKey] = useState(""); // Key to sort by
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  // Fetch products and orders
   const fetchProducts = async () => {
     try {
       const productResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
@@ -32,7 +33,6 @@ export default function Products() {
     }
   };
 
-  // Adjust product stock based on orders
   const adjustProductQuantities = (products, orders) => {
     const updatedProducts = [...products];
 
@@ -49,43 +49,37 @@ export default function Products() {
     return updatedProducts;
   };
 
-  // Search and filter functionality
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-    filterProducts(query, categoryQuery);
+    filterProducts(query, categoryQuery, sortKey);
   };
 
   const handleCategoryChange = (e) => {
     const category = e.target.value.toLowerCase();
     setCategoryQuery(category);
-    filterProducts(searchQuery, category);
+    filterProducts(searchQuery, category, sortKey);
   };
 
-  const filterProducts = (search, category) => {
-    const filtered = allProducts.filter(
+  const handleSortChange = (e) => {
+    const key = e.target.value;
+    setSortKey(key);
+    filterProducts(searchQuery, categoryQuery, key);
+  };
+
+  const filterProducts = (search, category, sortKey) => {
+    let filtered = allProducts.filter(
       (product) =>
         (product.productId.toLowerCase().includes(search) ||
           product.productName.toLowerCase().includes(search)) &&
         (category === "" || product.category.toLowerCase().includes(category))
     );
+
+    if (sortKey) {
+      filtered = mergeSort(filtered, sortKey);
+    }
+
     setFilteredProducts(filtered);
-  };
-
-  // Simulate order placement and update state
-  const handleOrderPlaced = (newOrder) => {
-    const updatedProducts = [...allProducts];
-
-    newOrder.items.forEach((item) => {
-      const product = updatedProducts.find((p) => p.productName === item.productName);
-      if (product) {
-        product.quantity -= item.quantity;
-        if (product.quantity < 0) product.quantity = 0; // Prevent negative stock
-      }
-    });
-
-    setAllProducts(updatedProducts);
-    setFilteredProducts(updatedProducts);
   };
 
   const columns = [
@@ -139,32 +133,30 @@ export default function Products() {
         <option value="Shorts">Shorts</option>
       </select>
 
+      {/* Sort Options */}
+      <select
+        value={sortKey}
+        onChange={handleSortChange}
+        style={{
+          padding: "10px",
+          marginBottom: "20px",
+          width: "200px",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+        }}
+      >
+        <option value="">Sort By</option>
+        <option value="productName">Name</option>
+        <option value="price">Price</option>
+        <option value="quantity">Stock</option>
+      </select>
+
       {/* Data Grid */}
       <DataGrid
         rows={filteredProducts}
         columns={columns}
         pageSizeOptions={[5, 10, 20]}
       />
-
-      {/* Simulate Order Placement */}
-      <button
-        onClick={() =>
-          handleOrderPlaced({
-            items: [{ productName: "T-shirt", quantity: 2 }],
-          })
-        }
-        style={{
-          padding: "10px 20px",
-          marginTop: "20px",
-          backgroundColor: "#007BFF",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-      >
-        Simulate Order Placement
-      </button>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { mergeSort } from "./sorting"; // Import the mergeSort function
 
 const AddOrder = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const AddOrder = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [error, setError] = useState("");
+  const [sortModel, setSortModel] = useState([]); // Track the sort model
 
   useEffect(() => {
     fetchProducts();
@@ -45,13 +47,12 @@ const AddOrder = () => {
     event.preventDefault();
     setError("");
 
-    // Prepare the selected items with quantity and product information
     const selectedItems = selectedRows.map((id) => {
       const product = allProducts.find((p) => p.id === id);
       return {
-        productId: product.id, // Product ID from the products list
-        productName: product.productName, // Product Name from the products list
-        quantity: quantities[id] || 1, // Include selected quantity
+        productId: product.id,
+        productName: product.productName,
+        quantity: quantities[id] || 1,
       };
     });
 
@@ -65,7 +66,6 @@ const AddOrder = () => {
       alert("Order submitted successfully!");
       console.log("Order Submitted: ", response.data);
 
-      // Reset form
       setCustomerName("");
       setMobileNumber("");
       setSelectedRows([]);
@@ -76,6 +76,21 @@ const AddOrder = () => {
       setError("There was an error submitting the order. Please try again.");
     }
   };
+
+  // Apply custom sorting using mergeSort
+  const applySorting = (products, sortModel) => {
+    if (!sortModel.length) return products;
+
+    const { field, sort } = sortModel[0]; // Get the first sort model
+
+    return mergeSort(products, (a, b) => {
+      if (a[field] < b[field]) return sort === "asc" ? -1 : 1;
+      if (a[field] > b[field]) return sort === "asc" ? 1 : -1;
+      return 0;
+    });
+  };
+
+  const sortedProducts = applySorting(allProducts, sortModel);
 
   const columns = [
     { field: "productId", headerName: "Product ID", width: 100 },
@@ -140,12 +155,14 @@ const AddOrder = () => {
           Select Products and Quantities
         </Typography>
         <DataGrid
-          rows={allProducts}
+          rows={sortedProducts}
           columns={columns}
           checkboxSelection
           onRowSelectionModelChange={(ids) => handleRowSelection(ids)}
           pageSizeOptions={[5, 10, 20]}
           autoHeight
+          sortModel={sortModel}
+          onSortModelChange={(model) => setSortModel(model)}
         />
 
         {/* Submit Button */}

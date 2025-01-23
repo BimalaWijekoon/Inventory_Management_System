@@ -1,7 +1,6 @@
 import { Component } from "react";
 import { Avatar, Box, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import customers from "./Customers";
 export default class CustomerList extends Component {
   render() {
     const columns = [
