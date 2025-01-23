@@ -4,6 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import OrderModal from "./OrderModal";
+import { mergeSort } from "./sorting"; // Import your custom mergeSort function
 
 export default class OrderList extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ export default class OrderList extends Component {
       products: [], // State to hold fetched product prices
       open: false,
       selectedOrder: null, // Selected order for the modal
+      sortModel: [{ field: 'orderId', sort: 'asc' }] // Add sort model state
     };
   }
 
@@ -20,7 +22,6 @@ export default class OrderList extends Component {
     this.loadData(); // Combined method to fetch products and orders
   }
 
-  // Combined fetch method to ensure products are loaded before orders
   loadData = async () => {
     try {
       await this.fetchProducts(); // Fetch products first
@@ -95,7 +96,6 @@ export default class OrderList extends Component {
       };
     });
   };
-  
 
   handleOrderDetail = (order) => {
     this.setState({ selectedOrder: order, open: true });
@@ -103,6 +103,23 @@ export default class OrderList extends Component {
 
   handleClose = () => {
     this.setState({ open: false, selectedOrder: null });
+  };
+
+  // Handle sorting changes
+  handleSortModelChange = (newSortModel) => {
+    this.setState({ sortModel: newSortModel });
+    this.sortOrders(newSortModel);
+  };
+
+  // Sort orders using custom mergeSort function
+  sortOrders = (sortModel) => {
+    const { orders } = this.state;
+    if (!sortModel.length) return; // No sort model selected
+
+    const { field, sort } = sortModel[0]; // Get the field and direction from sort model
+    const sortedOrders = mergeSort(orders, field, sort); // Use mergeSort
+
+    this.setState({ orders: sortedOrders });
   };
 
   render() {
@@ -159,6 +176,8 @@ export default class OrderList extends Component {
           }}
           pageSizeOptions={[10, 15, 20]}
           rowSelection={false}
+          sortingModel={this.state.sortModel} // Bind the sorting model
+          onSortingModelChange={this.handleSortModelChange} // Listen for sorting changes
         />
 
         <Modal open={this.state.open} onClose={this.handleClose}>

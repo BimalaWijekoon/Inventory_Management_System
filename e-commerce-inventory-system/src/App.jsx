@@ -4,8 +4,6 @@ import Home from "./components/bodyComponents/Home/Home";
 import Inventory from "./components/bodyComponents/inventory/Inventory";
 import Customer from "./components/bodyComponents/customer/Customer";
 import Revenue from "./components/bodyComponents/revenue/Revenue";
-import Growth from "./components/bodyComponents/growth/Growth";
-import Setting from "./components/bodyComponents/Settings/Setting";
 import Order from "./components/bodyComponents/order/Order";
 import AddProduct from "./components/bodyComponents/inventory/add-product";
 import AddOrder from "./components/bodyComponents/order/addorder"; // Ensure AddOrder is correctly imported
@@ -45,8 +43,6 @@ function App() {
         <Route path="/orders" element={<Order />} />
         <Route path="/customers" element={<Customer />} />
         <Route path="/revenue" element={<Revenue />} />
-        <Route path="/growth" element={<Growth />} />
-        <Route path="/settings" element={<Setting />} />
         <Route path="/add-product" element={<AddProduct />} /> {/* Add Product route */}
         <Route path="/addorder" element={<AddOrder />} /> {/* Add Order route */}
       </Route>
